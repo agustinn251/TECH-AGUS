@@ -28,6 +28,7 @@ const PAISES = [
   'Perú',
   'Brasil',
   'México',
+  'Ecuador',
   
 ];
 const f = { pais: 'Todos', tipo: null, q: '' };

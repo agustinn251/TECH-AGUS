@@ -5,7 +5,6 @@ const COLORES = {
   "Agua": "#22d3c5",               // Turquesa
   "Minería": "#b794f6",            // Violeta claro
   "Acero e industria": "#ef4444",  // Rojo Industrial
-  "Infraestructura": "#3b82f6"     // Azul
 };
 
 function obtenerEstadoPorAvance(avance) {
@@ -91,7 +90,7 @@ const OBRAS = [
   ]
 },
   {
-    id: "duplicar", nombre: "Duplicar", tipo: "Petróleo y gas", pais: "Argentina",
+    id: "duplicar", nombre: "Duplicar", tipo: "Infraestructura", pais: "Argentina",
     ubicacion: "Allen (Río Negro) a Puerto Rosales (Buenos Aires)",
     coordenadas: [-38.98, -67.83], ruta: [[-38.98, -67.83], [-38.95, -66.0], [-38.9, -64.0], [-38.92, -62.06]], // trazado referencial
     inversion_usd: 1400000000, inversion_nota: "Inversión informada por Oldelval.",
@@ -105,7 +104,50 @@ const OBRAS = [
     fuentes: [{ texto: "Noticias NQN: inauguración (2025)", url: "https://www.noticiasnqn.com.ar/noticias/2025/04/03/310806-inauguracion-de-la-nueva-planta-de-bombeo-de-oldelval-hacia-buenos-aires" },
               { texto: "Noticias NQN: primera ampliación (2023)", url: "https://www.noticiasnqn.com.ar/amp/noticias/2023/10/01/283808-vaca-muerta-oldelval-suma-20-mil-barriles-de-crudo-por-dia-a-su-capacidad-de-transporte" },
               { texto: "Inspenet: avance del Módulo 2", url: "https://inspenet.com/en/news/duplicate-pipeline-construction-project/" }]
-  },
+  },{
+  id: "shushufindi",
+  nombre: "Shushufindi",
+  tipo: "Petróleo y gas",
+  pais: "Ecuador",
+
+  ubicacion: "Provincia de Sucumbíos, Ecuador",
+  coordenadas: [-0.193305, -76.644577],
+
+  inversion_usd: 500000000,
+  inversion_nota: "Proyecto EPC de ampliación y optimización de campo petrolero.",
+
+  avance_pct: 100,
+  estado: "Finalizado",
+
+  descripcion: "Proyecto de ampliación y optimización del campo petrolero Shushufindi-Aguarico. Incluye construcción de plataformas, facilidades de producción, líneas de flujo, infraestructura eléctrica y planta de tratamiento de agua.",
+
+  datos: [
+    { valor: "1.600", etiqueta: "Colaboradores pico" },
+    { valor: "7,8 M", etiqueta: "Horas-hombre" },
+    { valor: "29 km", etiqueta: "Línea eléctrica" },
+    { valor: "40 Kbapd", etiqueta: "Planta de agua" }
+  ],
+
+  colaboradores: [
+    "Techint Ingeniería y Construcción",
+    "Consorcio Shushufindi S.A."
+  ],
+
+  hitos: [
+    { fecha: "2012", texto: "Inicio de los contratos EPC en el campo Shushufindi." },
+    { fecha: "2015", texto: "Ejecución de ampliaciones y nuevas plataformas." },
+    { fecha: "2018", texto: "Consolidación de infraestructura de producción y servicios." }
+  ],
+
+  fotos: [],
+
+  fuentes: [
+    {
+      texto: "Techint - Proyecto Shushufindi",
+      url: "https://www.techint.com/es/nuestros-proyectos/shushufindi/"
+    }
+  ]
+},
   {
   id: "vmos",
   nombre: "Vaca Muerta Oil Sur (VMOS)",
@@ -538,4 +580,3 @@ const OBRAS = [
               { texto: "Global Energy Monitor: planta de Ipatinga", url: "https://gem.wiki/Usiminas_Ipatinga_steel_plant" }]
   }
 ];
-  
