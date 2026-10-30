@@ -201,7 +201,7 @@ const OBRAS = [
   ]
 },
   {
-    id: "duplicar-norte", nombre: "Duplicar Norte", tipo: "Petróleo y Gas", pais: "Argentina",
+    id: "duplicar-norte", nombre: "Duplicar Norte", tipo: "Petróleo y gas", pais: "Argentina",
     ubicacion: "Estación de bombeo Auca Mahuida (Neuquén) a Allen (Río Negro)",
     coordenadas: [-37.7, -68.9], ruta: [[-37.7, -68.9], [-38.4, -68.5], [-38.98, -67.83]], // trazado referencial
     inversion_usd: 380000000, inversion_nota: "Inversión estimada informada por la prensa.",
