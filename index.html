@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TECH-AGUS - información</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="map" aria-label="Mapa de proyectos"></div>
+<main id="ui">
+  <header class="card">
+    <div class="marca"><span style="color:#34A853;">TECH-AGUS </span></div>
+    <h1>
+  | Avance de Obras <br><b><span style="color:#34A853;">| Proyecto Grupo Tech - Agus</span></b>
+</h1>
+
+<p class="descripcion">
+  Información pública • Sin datos corporativos ni confidenciales • Página en construcción
+</p>
+<br>
+
+<nav id="paises" class="tabs" aria-label="Países"></nav>
+    <nav id="paises" class="tabs" aria-label="Países"></nav>
+    <input id="buscar" type="search" placeholder="Buscar obra, lugar o empresa" aria-label="Buscar obra">
+    <nav id="tipos" class="chips" aria-label="Tipo de obra"></nav>
+  </header>
+  <section id="detalle" class="card"></section>
+</main>
+<div id="stats" class="stats card" aria-label="Resumen"></div>
+<div class="cta-wrap"><button id="cta" class="cta"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>En Contrucción</button></div>
+<dialog id="subida" class="modal">
+  <h2>En Contrucción - Subí tu foto de la obra</h2>
+  <label class="campo">Obra <select id="obra-sel"></select></label>
+  <div id="zona" class="zona">
+    <p>Importación de Imagenes</p>
+    <label class="btn">Elegir imágenes<input id="subir" type="file" accept="image/*" multiple hidden></label>
+    <label class="btn">Importar carpeta<input id="carpeta" type="file" webkitdirectory hidden></label>
+    <p id="msg" class="nota" role="status"></p>
+  </div>
+  <button id="cerrar-modal" class="btn">Listo</button>
+</dialog>
+<dialog id="visor"><img alt="Imagen ampliada"></dialog>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="data/obras.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
