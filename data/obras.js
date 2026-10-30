@@ -89,8 +89,75 @@ const OBRAS = [
     }
   ]
 },
+{
+  id: "ferro-carajas-s11d",
+  nombre: "Ferro Carajás S11D",
+
+  tipo: "Minería",
+  pais: "Brasil",
+
+  ubicacion: "Marabá, Estado de Pará, Brasil",
+  coordenadas: [-6.058611, -50.176944],
+
+  estado: "Finalizado",
+  avance_pct: 100,
+
+  inversion_usd: 126000000,
+  inversion_nota: "Monto de contrato informado públicamente por Techint E&C.",
+
+  descripcion:
+    "Proyecto de construcción y montaje electromecánico del sistema Truckless del complejo minero S11D de Vale. La obra permitió reemplazar el transporte convencional mediante camiones por un sistema de correas transportadoras de alta capacidad, incrementando la eficiencia y sustentabilidad de una de las mayores operaciones de mineral de hierro del mundo.",
+
+  datos: [
+    {
+      valor: "1.721",
+      etiqueta: "Colaboradores pico"
+    },
+    {
+      valor: "+5 M",
+      etiqueta: "Horas hombre"
+    },
+    {
+      valor: "27.900 t",
+      etiqueta: "Correas transportadoras"
+    },
+    {
+      valor: "16.000 t/h",
+      etiqueta: "Capacidad de procesamiento"
+    }
+  ],
+
+  colaboradores: [
+    "Vale",
+    "Techint Ingeniería y Construcción"
+  ],
+
+  hitos: [
+    {
+      fecha: "Abril 2015",
+      texto: "Inicio de las obras del sistema Truckless."
+    },
+    {
+      fecha: "2016-2017",
+      texto: "Montaje de correas transportadoras y equipamiento electromecánico."
+    },
+    {
+      fecha: "Enero 2018",
+      texto: "Finalización y puesta en servicio del proyecto."
+    }
+  ],
+
+  fotos: [],
+
+  fuentes: [
+    {
+      texto: "Techint - Ferro Carajás S11D",
+      url: "https://www.techint.com/es/nuestros-proyectos/ferro-carajas-s11d/"
+    }
+  ]
+},
   {
-    id: "duplicar", nombre: "Duplicar", tipo: "Petróleo y gas", pais: "Argentina",
+    id: "duplicar", nombre: "Duplicar", tipo: "Infraestructura", pais: "Argentina",
     ubicacion: "Allen (Río Negro) a Puerto Rosales (Buenos Aires)",
     coordenadas: [-38.98, -67.83], ruta: [[-38.98, -67.83], [-38.95, -66.0], [-38.9, -64.0], [-38.92, -62.06]], // trazado referencial
     inversion_usd: 1400000000, inversion_nota: "Inversión informada por Oldelval.",
