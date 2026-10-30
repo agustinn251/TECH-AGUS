@@ -24,7 +24,7 @@ const $detalle = $('detalle'), visor = $('visor');
 // ---- Paises en la busqueda del panel izquierdo ----
 const PAISES = [
   'Argentina',
-  'Chiles',
+  'Chile',
   'Perú',
   'Brasil',
   'México',
