@@ -91,7 +91,7 @@ const OBRAS = [
   ]
 },
   {
-    id: "duplicar", nombre: "Duplicar", tipo: "Infraestructura", pais: "Argentina",
+    id: "duplicar", nombre: "Duplicar", tipo: "Petróleo y gas", pais: "Argentina",
     ubicacion: "Allen (Río Negro) a Puerto Rosales (Buenos Aires)",
     coordenadas: [-38.98, -67.83], ruta: [[-38.98, -67.83], [-38.95, -66.0], [-38.9, -64.0], [-38.92, -62.06]], // trazado referencial
     inversion_usd: 1400000000, inversion_nota: "Inversión informada por Oldelval.",
@@ -109,7 +109,7 @@ const OBRAS = [
   {
   id: "vmos",
   nombre: "Vaca Muerta Oil Sur (VMOS)",
-  tipo: "Infraestructura",
+  tipo: "Petróleo y gas",
   pais: "Argentina",
 
   ubicacion: "Allen (Río Negro) - Punta Colorada (Río Negro)",
@@ -217,7 +217,7 @@ const OBRAS = [
               { texto: "Más Energía: cuándo estará listo", url: "https://mase.lmneuquen.com/vaca-muerta/techint-le-da-forma-al-duplicar-norte-cuando-estara-listo-el-nuevo-oleoducto-sacar-mas-petroleo-vaca-muerta-n1249204" }]
   },
   {
-    id: "gasoducto-perito-moreno", nombre: "Gasoducto Perito Moreno", tipo: "Infraestructura", pais: "Argentina",
+    id: "gasoducto-perito-moreno", nombre: "Gasoducto Perito Moreno", tipo: "Petróleo y gas", pais: "Argentina",
     ubicacion: "Tratayén (Neuquén) a Salliqueló (Buenos Aires)",
     coordenadas: [-38.55, -69.95], ruta: [[-38.55, -69.95], [-38.4, -67.5], [-37.9, -65.5], [-37.3, -64.0], [-36.75, -62.97]], // trazado referencial
     inversion_usd: 560000000, inversion_nota: "Monto de la ampliación del Tramo I (RIGI, TGS). Las fuentes consultadas no informan el monto de la obra original.",
