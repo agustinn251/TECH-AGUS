@@ -90,7 +90,7 @@ const OBRAS = [
   ]
 },
   {
-    id: "duplicar", nombre: "Duplicar", tipo: "Infraestructura", pais: "Argentina",
+    id: "duplicar", nombre: "Duplicar", tipo: "Petróleo y gas", pais: "Argentina",
     ubicacion: "Allen (Río Negro) a Puerto Rosales (Buenos Aires)",
     coordenadas: [-38.98, -67.83], ruta: [[-38.98, -67.83], [-38.95, -66.0], [-38.9, -64.0], [-38.92, -62.06]], // trazado referencial
     inversion_usd: 1400000000, inversion_nota: "Inversión informada por Oldelval.",
