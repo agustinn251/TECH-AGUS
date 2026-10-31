@@ -22,7 +22,7 @@ map.on('zoomend', ajustarZoom); ajustarZoom();
 const $detalle = $('detalle'), visor = $('visor');
 
 // ---- Paises en la busqueda del panel izquierdo ----
-const PAISES = [
+const PAISES_BASE = [
   'Argentina',
   'Chile',
   'Perú',
@@ -31,9 +31,11 @@ const PAISES = [
   'Ecuador',
   
 ];
+// Si agregás un proyecto de otro país en el Excel, aparece solo al final de la lista.
+const PAISES = [...new Set([...PAISES_BASE, ...OBRAS.map(o => o.pais)])];
 const f = { pais: 'Todos', tipo: null, q: '' };
 const color = o => COLORES[o.tipo] || '#ccc';
-const usd = n => 'US$ ' + (n >= 1e9 ? (n / 1e9).toLocaleString('es-AR') + ' mil M' : (n / 1e6).toLocaleString('es-AR') + ' M');
+const usd = n => !n ? 's/d' : 'US$ ' + (n >= 1e9 ? (n / 1e9).toLocaleString('es-AR') + ' mil M' : (n / 1e6).toLocaleString('es-AR') + ' M');
 const norm = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 const visibles = () => OBRAS.filter(o => (f.pais === 'Todos' || o.pais === f.pais) && (!f.tipo || o.tipo === f.tipo) &&
   (!f.q || norm([o.nombre, o.ubicacion, o.pais, o.tipo, o.descripcion, ...o.colaboradores].join(' ')).includes(norm(f.q))));
@@ -154,7 +156,7 @@ function seleccionar(id) {
       <div class="kpi"><b>${usd(o.inversion_usd)}</b><span>Inversión</span></div>
       <div class="kpi"><b>${o.estado}</b><span>Estado</span></div>
     </div>
-    <p class="nota" style="margin:0 0 12px">${o.inversion_nota}</p>
+    <p class="nota" style="margin:0 0 12px">${o.inversion_nota || ''}</p>
     ${avance}
     <h3>Sobre la obra</h3>
     <p class="desc">${o.descripcion}</p>
