@@ -3,11 +3,12 @@
 //   'url'         -> un enlace a un .json, .csv o .xlsx (por ejemplo, un archivo de SharePoint)
 //   'sharepoint'  -> una lista de SharePoint, leída con Microsoft Graph (pide iniciar sesión)
 const FUENTE = {
-  modo: 'url',
+  modo: 'local',
 
   // Solo para modo 'url'. El enlace debe poder abrirse desde el navegador del usuario
   // (por ejemplo, un enlace de descarga directa del archivo en SharePoint o OneDrive).
-  url:'https://docs.google.com/spreadsheets/d/1DhxvsWIZzSRM_ZbvupWwT9fHDenw_0nl/edit?usp=sharing&ouid=106195165748188852842&rtpof=true&sd=true',
+  url: '',
+
   // Solo para modo 'sharepoint'. Necesita:
   //  1) Un registro de aplicación en Microsoft Entra ID (tipo "Aplicación de página única")
   //     con el permiso delegado de Microsoft Graph "Sites.Read.All".
