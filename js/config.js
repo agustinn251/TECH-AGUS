@@ -7,7 +7,11 @@ const FUENTE = {
 
   // Solo para modo 'url'. El enlace debe poder abrirse desde el navegador del usuario
   // (por ejemplo, un enlace de descarga directa del archivo en SharePoint o OneDrive).
+<<<<<<< HEAD
   url:'https://docs.google.com/spreadsheets/d/1DhxvsWIZzSRM_ZbvupWwT9fHDenw_0nl/edit?usp=sharing&ouid=106195165748188852842&rtpof=true&sd=true',
+=======
+  url: 'https://docs.google.com/spreadsheets/d/1jyRwIQb-Rcpp0ERvFJtfp_Pu60u4KupCdEAzlrYKZXA/export?format=csv&gid=0',
+>>>>>>> 9fd38d816ebeba42b96aa3b56266e9d746bc8893
 
   // Solo para modo 'sharepoint'. Necesita:
   //  1) Un registro de aplicación en Microsoft Entra ID (tipo "Aplicación de página única")
