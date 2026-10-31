@@ -88,7 +88,18 @@
     return parseCSV(t);
   }
   const leerArchivo = async f => desdeBuffer(await f.arrayBuffer(), f.name);
-  async function leerUrl(url) { const r = await fetch(url, { credentials: 'include' }); if (!r.ok) throw new Error(`La URL respondió ${r.status}`); return desdeBuffer(await r.arrayBuffer(), url); }
+  async function leerUrl(url) {
+  const r = await fetch(url, {
+    method: 'GET',
+    credentials: 'omit'
+  });
+
+  if (!r.ok) {
+    throw new Error(`La URL respondió ${r.status}`);
+  }
+
+  return desdeBuffer(await r.arrayBuffer(), url);
+}
   async function leerSharePoint(c) {
     if (location.protocol === 'file:') throw new Error('SharePoint necesita abrir el mapa desde https o http://localhost, no como archivo.');
     if (!c || !c.tenantId || !c.clientId) throw new Error('Faltan tenantId y clientId en js/config.js.');
