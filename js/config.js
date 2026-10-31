@@ -7,7 +7,7 @@ const FUENTE = {
 
   // Solo para modo 'url'. El enlace debe poder abrirse desde el navegador del usuario
   // (por ejemplo, un enlace de descarga directa del archivo en SharePoint o OneDrive).
-  url: 'https://docs.google.com/spreadsheets/d/1jyRwIQb-Rcpp0ERvFJtfp_Pu60u4KupCdEAzlrYKZXA/edit?gid=0#gid=0',
+  url:'https://docs.google.com/spreadsheets/d/1jyRwIQb-Rcpp0ERvFJtfp_Pu60u4KupCdEAzlrYKZXA/edit?gid=0#gid=0',
 
   // Solo para modo 'sharepoint'. Necesita:
   //  1) Un registro de aplicación en Microsoft Entra ID (tipo "Aplicación de página única")
