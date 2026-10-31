@@ -5,19 +5,14 @@
 const FUENTE = {
   modo: 'url',
 
-  // Solo para modo 'url'. El enlace debe poder abrirse desde el navegador del usuario
-  // (por ejemplo, un enlace de descarga directa del archivo en SharePoint o OneDrive).
   url: 'https://docs.google.com/spreadsheets/d/1DhxvsWIZzSRM_ZbvupWwT9fHDenw_0nl/export?format=csv&gid=1936800221',
-  // Solo para modo 'sharepoint'. Necesita:
-  //  1) Un registro de aplicación en Microsoft Entra ID (tipo "Aplicación de página única")
-  //     con el permiso delegado de Microsoft Graph "Sites.Read.All".
-  //  2) Como URI de redirección, la dirección https donde publiques este mapa
-  //     (o http://localhost:8000 para probar). No funciona abriendo index.html como archivo.
+
   sharepoint: {
-    tenantId: '',                       // ID del directorio (inquilino)
-    clientId: '',                       // ID de la aplicación (cliente)
-    host: 'tuempresa.sharepoint.com',   // dominio de SharePoint
-    sitio: '/sites/Proyectos',          // ruta del sitio
-    lista: 'Proyectos'                  // nombre de la lista
+    tenantId: '',
+    clientId: '',
+    host: 'tuempresa.sharepoint.com',
+    sitio: '/sites/Proyectos',
+    lista: 'Proyectos'
   }
 };
+
