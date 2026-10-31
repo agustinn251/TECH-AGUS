@@ -5,7 +5,7 @@
 const FUENTE = {
   modo: 'url',
 
-  url: 'https://docs.google.com/spreadsheets/d/1DhxvsWIZzSRM_ZbvupWwT9fHDenw_0nl/export?format=csv&gid=1936800221',
+  url: 'https://docs.google.com/spreadsheets/d/1jyRwIQb-Rcpp0ERvFJtfp_Pu60u4KupCdEAzlrYKZXA/export?format=csv',
 
   sharepoint: {
     tenantId: '',
