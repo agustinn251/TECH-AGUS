@@ -12,7 +12,7 @@ const FUENTE = {
     clientId: '',
     host: 'tuempresa.sharepoint.com',
     sitio: '/sites/Proyectos',
-    lista: 'Proyectos'
+    lista: 'Proyectoss'
   }
 };
 
