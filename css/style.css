@@ -1,4 +1,4 @@
-:root{--bg:#0b0c10;--glass:rgba(16,18,24,.8);--line:rgba(255,255,255,.09);--text:#f2f4f7;--muted:#97a0ad;--accent:#ff5a1f;--verde:#34A853}
+:root{--bg:#0b0c10;--glass:rgba(16,18,24,.8);--line:rgba(255,255,255,.09);--text:#f2f4f7;--muted:#97a0ad;--accent:#ff5a1f}
 *{box-sizing:border-box}
 html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif}
 #map{position:absolute;inset:0;background:#29282e}
@@ -14,8 +14,7 @@ header p{margin:0;color:var(--muted);line-height:1.45;font-size:14px}
 #lista button::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--c)}
 #lista button[aria-pressed="true"]{background:#fff;color:#0b0c10}
 button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-#detalle{display:none}
-body.lista-abierta #detalle{display:flex;flex-direction:column;flex:1;position:relative;width:100%;max-height:none;min-height:0;height:100%;overflow:hidden;padding:22px}
+#detalle{overflow:auto;padding:22px;min-height:0;max-height:70vh;scrollbar-width: thin;}
 .tipo{display:inline-block;font-size:12px;font-weight:700;color:#0b0c10;background:var(--c);padding:3px 10px;border-radius:999px}
 h2{font-size:28px;line-height:1.05;letter-spacing:-.03em;font-weight:800;margin:12px 0 4px}
 .ubic{color:var(--muted);margin:0 0 4px;font-size:14px}
@@ -31,12 +30,13 @@ p.desc{line-height:1.6;font-size:14.5px;margin:0;color:#d5dae1}
 ul{padding-left:18px;line-height:1.55;margin:0;font-size:14.5px}
 .hitos{list-style:none;padding:0;border-left:2px solid var(--line)}
 .hitos li{padding:0 0 12px 16px;position:relative}
-.hitos li::before{content:"";position:absolute;left:-6px;top:6px;width:10px;height:10px;border-radius:50%;background:var(--c)}
+.hitos li::before{content:"";position:absolute;left:-6px;top:6px;width:100px;height:10px;border-radius:50%;background:var(--c)}
 .hitos small{color:var(--muted);display:block;font-size:12px}
 .galeria{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .galeria img,.vacio{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:12px}
 .vacio{display:grid;place-items:center;text-align:center;color:var(--muted);font-size:12.5px;padding:10px;border:1px dashed var(--line);grid-column:1/-1;aspect-ratio:auto;height:90px}
 a{color:#ffa27a}
+/* mapa */
 .pin{position:relative;width:0;height:0}
 .pin i{position:absolute;width:16px;height:16px;left:-8px;top:-8px;border-radius:50%;background:var(--c);border:3px solid #fff;box-shadow:0 0 0 2px rgba(0,0,0,.4)}
 .pin.sel i::after{content:"";position:absolute;inset:-12px;border-radius:50%;border:2px solid var(--c);animation:pulso 2s ease-out infinite}
@@ -51,11 +51,18 @@ a{color:#ffa27a}
 .leaflet-control-layers-expanded{padding:8px 12px!important}
 .leaflet-control-attribution{background:rgba(0,0,0,.55)!important;color:#aaa!important}
 .leaflet-control-attribution a{color:#ccc!important}
+@media (max-width:820px){
+  #ui{left:10px;right:10px;top:10px;bottom:auto;width:auto}
+  #detalle{max-height:60vh;padding:18px}
+  h1{font-size:28px}
+  header p{display:none}
+}
+/* imágenes */
 .zona{border:1px dashed rgba(255,255,255,.22);border-radius:14px;padding:14px;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .zona.sobre{border-color:var(--c);background:rgba(255,255,255,.05)}
 .zona p{margin:0;width:100%;font-size:13.5px;color:var(--muted)}
 .zona .nota{margin:0}
-.btn{font:500 13.5px Inter,sans-serif;background:#fff;color:#0b0c10;padding:8px 14px;border-radius:999px;cursor:pointer;border:0}
+.btn{font:500 13.5px Inter,sans-serif;background:#fff;color:#0b0c10;padding:8px 14px;border-radius:999px;cursor:pointer}
 .btn:focus-within{outline:2px solid var(--accent);outline-offset:2px}
 .galeria figure{margin:0;position:relative}
 .galeria img{cursor:zoom-in;display:block}
@@ -64,16 +71,16 @@ a{color:#ffa27a}
 #visor{border:0;padding:0;background:transparent;max-width:94vw;max-height:94vh}
 #visor::backdrop{background:rgba(0,0,0,.88)}
 #visor img{max-width:94vw;max-height:90vh;display:block;border-radius:8px;cursor:zoom-out}
+/* v3: estadísticas, fotos en el mapa, botón destacado */
 [hidden]{display:none!important}
 .fila{display:flex;justify-content:space-between;align-items:center}
 .cerrar{font:500 13px Inter,sans-serif;color:var(--text);background:transparent;border:1px solid var(--line);border-radius:999px;padding:6px 12px;cursor:pointer}
-
-/* Estilo original de los KPIs en PC */
-.stats{position:absolute;z-index:1000;top:20px;left:460px;right:20px;width:fit-content;max-width:calc(100% - 540px);display:flex;gap:30px;padding:12px 24px;border-radius:20px;background:var(--glass);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid var(--line)}
+.btn{border:0}
+.galeria{margin-top:12px}
+.stats{position:absolute;z-index:1000;top:20px;left:460px;right:20px;width:fit-content;max-width:calc(100% - 480px);display:flex;gap:30px;padding:12px 24px;border-radius:20px}
 .stats div{display:flex;flex-direction:column;gap:2px}
 .stats b{font:700 18px 'JetBrains Mono',monospace}
 .stats span{font-size:11.5px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
-
 .cta-wrap{position:absolute;z-index:1000;left:460px;right:20px;bottom:26px;display:flex;justify-content:center;pointer-events:none}
 .cta{pointer-events:auto;font:800 20px Inter,sans-serif;color:#1a1200;background:linear-gradient(#ffd23f,#f5a300);border:3px solid rgba(255,255,255,.35);padding:15px 30px;border-radius:999px;display:flex;gap:12px;align-items:center;cursor:pointer;box-shadow:0 0 30px rgba(255,190,0,.45)}
 .cta:focus-visible{outline:3px solid #fff;outline-offset:3px}
@@ -91,6 +98,14 @@ a{color:#ffa27a}
 .campo{display:block;font-size:13px;color:var(--muted);margin-bottom:12px}
 .campo select{display:block;width:100%;margin-top:6px;padding:10px;border-radius:10px;background:#0b0c10;color:var(--text);border:1px solid var(--line);font:inherit}
 .modal>.btn{margin-top:4px}
+@media (max-width:820px){
+  .stats{display:none}
+  .cta-wrap{left:10px;right:64px;top:12px;bottom:auto;justify-content:flex-start}
+  .cta{font-size:15px;padding:10px 18px}
+  .leaflet-control-zoom{display:none}
+}
+/* v4: países, búsqueda, filtros y tarjetas */
+h1{font-size:28px;margin:10px 0 14px}
 .tabs,.chips{display:flex;gap:6px;flex-wrap:wrap}
 .tabs button{font:600 13.5px Inter,sans-serif;color:var(--text);background:rgba(255,255,255,.05);border:1px solid var(--line);padding:7px 12px;border-radius:999px;cursor:pointer}
 .tabs button sup{font:500 11px 'JetBrains Mono',monospace;color:var(--muted);margin-left:5px}
@@ -102,6 +117,15 @@ a{color:#ffa27a}
 .chips button{font:500 12.5px Inter,sans-serif;color:var(--text);background:transparent;border:1px solid var(--line);padding:5px 11px;border-radius:999px;cursor:pointer;display:flex;align-items:center;gap:7px}
 .chips button::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--c)}
 .chips button[aria-pressed="true"]{border-color:var(--c);background:rgba(255,255,255,.1)}
+.tabs button:focus-visible,.chips button:focus-visible,.obra:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.resumen{margin:0 0 4px}
+#detalle>h3:first-of-type{margin-top:16px}
+#detalle::-webkit-scrollbar{width:6px;}
+#detalle::-webkit-scrollbar-track{background:transparent;}
+#detalle::-webkit-scrollbar-thumb{background:#2f3b52;border-radius:999px;}
+#detalle::-webkit-scrollbar-thumb:hover{background:#4b5d80;}
+
+#detalle{scrollbar-width:thin;scrollbar-color:#34A853 transparent;}
 .obra{display:grid;grid-template-columns:auto 1fr auto;gap:3px 12px;align-items:center;width:100%;text-align:left;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:8px;color:var(--text);font:inherit;cursor:pointer;transition:border-color .15s,background .15s}
 .obra:hover{border-color:var(--c);background:rgba(255,255,255,.08)}
 .obra .dot{grid-row:1/3;width:12px;height:12px;border-radius:50%;background:var(--c)}
@@ -110,30 +134,337 @@ a{color:#ffa27a}
 .obra small{grid-column:2/4;color:var(--muted);font-size:12.5px;line-height:1.3}
 .mini{grid-column:1/-1;height:4px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden;margin-top:6px}
 .mini u{display:block;height:100%;background:var(--c)}
+.nav{display:flex;gap:6px}
+.etiquetas{margin:14px 0 0;display:flex;gap:6px;flex-wrap:wrap}
+.pais-tag{font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+.vacio-lista{text-align:center;padding:30px 10px;color:var(--muted)}
+.zoom-bajo .pin:not(.sel) span{display:none}
+@media (max-width:820px){ h1{font-size:22px;margin:6px 0 10px} #buscar{margin:8px 0} .marca{font-size:13px} }
 
+/* conexión de datos (Excel / SharePoint) */
+.stats{max-width:calc(100% - 540px)}
 .icono-datos{position:absolute;z-index:1000;top:20px;right:20px;display:grid;place-items:center;width:42px;height:42px;background:var(--glass);border:1px solid var(--line);border-radius:12px;color:var(--text);cursor:pointer;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
 .icono-datos:hover{border-color:#34A853}
 .icono-datos svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
-
+.modal.ancho{width:min(660px,94vw);max-height:88vh;overflow:auto}
+.aviso-basica{background:rgba(245,163,0,.12);border:1px solid rgba(245,163,0,.4);border-radius:12px;padding:10px 12px;font-size:13px;color:#ffd98a;margin:12px 0;line-height:1.4}
+.cerrar:hover{background:rgba(255,255,255,.08)}
 #toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);background:#fff;color:#0b0c10;padding:10px 18px;border-radius:999px;font:600 14px Inter,sans-serif;z-index:3000;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90vw}
 #toast.on{opacity:1}
+@media (max-width:820px){ .icono-datos{top:auto;bottom:70px;right:10px} }
 
-.obras-controls{display:flex;align-items:center;justify-content:flex-start;min-height:0;pointer-events:auto}
-.obras-toggle,.obras-cerrar{align-items:center;justify-content:center;gap:9px;min-height:42px;padding:9px 14px;color:var(--text);background:rgba(16,18,24,.96);border:1px solid var(--line);border-radius:12px;font:700 13px Inter,sans-serif;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.28);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);pointer-events:auto}
-.obras-toggle{display:inline-flex}
-.obras-toggle > span:first-child{color:#34A853;font-size:18px;line-height:1}
-.obras-toggle b{display:grid;place-items:center;min-width:22px;height:22px;padding:0 5px;border-radius:50px;background:#34A853;color:#07110a;font:700 11px Inter,sans-serif}
-.obras-cerrar{display:inline-flex;width:36px;min-width:36px;height:36px;min-height:36px;padding:0;margin-left:auto;border-radius:50%;font-size:15px}
-.obras-toggle[hidden],.obras-cerrar[hidden]{display:none!important}
-body.lista-abierta #ui{bottom:20px}
-body.lista-abierta #detalle .lista-contenedor{flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--verde,#34A853) transparent;padding-right:4px}
 
-/* Solo ocultamos .stats en mobile para que no pise los botones */
-@media (max-width:820px){
-  .stats{display:none!important}
-  #ui{left:10px;right:10px;top:10px;bottom:auto;width:auto}
-  #detalle{max-height:60vh;padding:18px}
-  h1{font-size:28px}
-  header p{display:none}
-  .icono-datos{top:auto;bottom:70px;right:10px}
+/* ==========================================
+   TECH-AGUS - FIX ICONOS Y CONTROLES MOBILE
+   ========================================== */
+
+@media screen and (max-width: 820px) {
+
+  /* 1. Marcadores normales del mapa */
+  .pin i {
+    width: 18px;
+    height: 18px;
+    left: -9px;
+    top: -9px;
+    border-width: 3px;
+  }
+
+  /* 2. Marcadores con fotografías */
+  .pin em.foto {
+    width: 44px;
+    height: 44px;
+    left: -22px;
+    top: -22px;
+    border-width: 3px;
+  }
+
+  .pin em.foto b {
+    min-width: 20px;
+    height: 20px;
+    top: -5px;
+    right: -5px;
+    font-size: 11px;
+    padding: 0 4px;
+  }
+
+  /* 3. Etiquetas de los proyectos */
+  .pin span {
+    font-size: 10px;
+    padding: 3px 7px;
+    left: 12px;
+    top: -10px;
+    max-width: 115px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .pin.con-foto span {
+    left: 28px;
+    top: -9px;
+  }
+
+  /* 4. Animaciones de selección */
+  .pin.sel i::after {
+    inset: -8px;
+  }
+
+  .pin.sel em.foto::after {
+    inset: -9px;
+  }
+
+  /* 5. Controles del mapa */
+  .leaflet-control-layers {
+    border-radius: 10px !important;
+    margin: 10px !important;
+  }
+
+  .leaflet-control-layers-toggle {
+    width: 40px !important;
+    height: 40px !important;
+    background-size: 22px 22px !important;
+  }
+
+  .leaflet-control-layers-expanded {
+    padding: 10px !important;
+    font-size: 12px;
+  }
+
+  /* 6. Botón de datos */
+  .icono-datos {
+    width: 42px;
+    height: 42px;
+    bottom: 75px;
+    right: 10px;
+    display: grid;
+    place-items: center;
+  }
+
+  .icono-datos svg {
+    width: 21px;
+    height: 21px;
+    display: block;
+  }
+
+  /* 7. Botón principal */
+  .cta {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 14px;
+    padding: 9px 15px;
+  }
+
+  .cta svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
+  /* 8. Evitar deformación de iconos SVG */
+  button svg {
+    flex-shrink: 0;
+    vertical-align: middle;
+  }
+}
+
+/* Pantallas muy pequeñas */
+@media screen and (max-width: 480px) {
+
+  .pin em.foto {
+    width: 38px;
+    height: 38px;
+    left: -19px;
+    top: -19px;
+  }
+
+  .pin em.foto b {
+    min-width: 18px;
+    height: 18px;
+    font-size: 10px;
+  }
+
+  .pin span {
+    font-size: 9px;
+    max-width: 90px;
+  }
+
+  .leaflet-control-layers-toggle {
+    width: 38px !important;
+    height: 38px !important;
+  }
+
+  .cta {
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+}
+
+/* =========================================================
+   DESPLEGABLE DEL LISTADO: el encabezado y los filtros
+   permanecen visibles; solo se pliega #detalle.
+   ========================================================= */
+
+.obras-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 0;
+  pointer-events: auto;
+}
+
+.obras-toggle,
+.obras-cerrar {
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 42px;
+  padding: 9px 14px;
+  color: var(--text);
+  background: rgba(16,18,24,.96);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  font: 700 13px Inter, sans-serif;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(0,0,0,.28);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  pointer-events: auto;
+}
+
+.obras-toggle {
+  display: inline-flex;
+}
+
+.obras-toggle > span:first-child {
+  color: #34A853;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.obras-toggle b {
+  display: grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 5px;
+  border-radius: 50px;
+  background: #34A853;
+  color: #07110a;
+  font: 700 11px Inter, sans-serif;
+}
+
+.obras-cerrar {
+  display: inline-flex;
+  width: 36px;
+  min-width: 36px;
+  height: 36px;
+  min-height: 36px;
+  padding: 0;
+  margin-left: auto;
+  border-radius: 50%;
+  font-size: 15px;
+}
+
+.obras-toggle:hover,
+.obras-cerrar:hover {
+  border-color: #34A853;
+}
+
+.obras-toggle[hidden],
+.obras-cerrar[hidden] {
+  display: none !important;
+}
+
+/* Cerrado: se conserva #ui y su header; solo desaparece el listado. */
+#detalle {
+  display: none;
+}
+
+/* Abierto: el listado vuelve al flujo debajo del encabezado y del control X. */
+body.lista-abierta #detalle {
+  display: block;
+  position: relative;
+  width: 100%;
+  max-height: min(60vh, 440px);
+  min-height: 120px;
+  overflow-y: auto;
+  padding: 22px;
+}
+
+/* Ajustes de lectura del listado */
+body.lista-abierta #detalle .resumen {
+  padding-right: 4px;
+  margin-bottom: 15px;
+}
+
+body.lista-abierta #detalle h3 {
+  margin-top: 22px;
+}
+
+@media (max-width: 820px) {
+  #ui {
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    bottom: auto;
+    width: auto;
+    max-height: calc(100vh - 20px);
+  }
+
+  header.card {
+    padding: 18px 20px;
+  }
+
+  .obras-controls {
+    width: 100%;
+  }
+
+  #detalle {
+    max-height: 0;
+  }
+
+  body.lista-abierta #detalle {
+    max-height: min(46vh, 420px);
+    padding: 16px;
+  }
+}
+
+/* 1. Asegurar que la columna contenedora izquierda ocupe todo el alto disponible */
+#ui {
+  position: absolute;
+  z-index: 1000;
+  left: 20px;
+  top: 20px;
+  bottom: 20px;
+  width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  pointer-events: none;
+}
+
+/* 2. Cuando el listado está abierto, hacemos que #detalle crezca para ocupar TODO el espacio sobrante */
+body.lista-abierta #ui {
+  bottom: 20px; /* Anclado al fondo */
+}
+
+body.lista-abierta #detalle {
+  display: flex !important;
+  flex-direction: column;
+  flex: 1 !important;           /* ¡CLAVE! Se estira para llenar todo el alto del contenedor */
+  max-height: none !important;  /* Eliminamos el tope rígido de 60vh / 70vh */
+  min-height: 0 !important;
+  height: 100%;
+  overflow: hidden;             /* Para que la cabecera quede fija arriba y solo scrolee la lista */
+}
+
+/* 3. Asegurar que la lista interna sea la que tenga scroll y llene el espacio */
+body.lista-abierta #detalle .lista-contenedor {
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--verde, #34A853) transparent;
+  padding-right: 4px;
 }
