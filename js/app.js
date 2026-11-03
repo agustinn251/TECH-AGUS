@@ -30,41 +30,35 @@ map.on('zoomend', ajustarZoom); ajustarZoom();
 
 const $detalle = $('detalle'), visor = $('visor');
 
-// ---- Panel plegable de obras (mismo criterio de apertura/cierre que Indicadores) ----
+// ---- Desplegable SOLO del listado de obras; el encabezado queda siempre visible ----
 const obrasToggle = $('obras-toggle');
 const obrasCerrar = $('obras-cerrar');
-const obrasMq = matchMedia('(min-width: 1200px)');
-let obrasAbierto = obrasMq.matches;
+let listadoAbierto = !matchMedia('(max-width: 820px)').matches;
 
-function aplicarPanelObras() {
-  document.body.classList.toggle('obras-abierto', obrasAbierto);
-  document.body.classList.toggle('obras-cerrado', !obrasAbierto);
-
-  // El botón de apertura aparece cuando el panel está cerrado.
-  obrasToggle.hidden = obrasAbierto;
-  obrasCerrar.hidden = !obrasAbierto;
-  obrasToggle.setAttribute('aria-expanded', String(obrasAbierto));
-  obrasToggle.setAttribute('aria-label', obrasAbierto ? 'Cerrar panel de obras' : 'Abrir panel de obras');
-
-  // Recalcular el mapa para aprovechar el espacio cuando el panel se pliega.
-  map.invalidateSize();
-  if (!actual) ajustarMapa();
+function actualizarListado() {
+  document.body.classList.toggle('lista-abierta', listadoAbierto);
+  obrasToggle.hidden = listadoAbierto;
+  obrasCerrar.hidden = !listadoAbierto;
+  obrasToggle.setAttribute('aria-expanded', String(listadoAbierto));
 }
 
-obrasToggle.addEventListener('click', () => {
-  obrasAbierto = true;
-  aplicarPanelObras();
-});
+function abrirListado() {
+  listadoAbierto = true;
+  actualizarListado();
+  map.invalidateSize();
+}
 
-obrasCerrar.addEventListener('click', () => {
-  obrasAbierto = false;
-  aplicarPanelObras();
-});
+function cerrarListado() {
+  listadoAbierto = false;
+  actualizarListado();
+  map.invalidateSize();
+}
 
-obrasMq.addEventListener('change', () => {
-  obrasAbierto = obrasMq.matches;
-  aplicarPanelObras();
-});
+obrasToggle.addEventListener('click', abrirListado);
+obrasCerrar.addEventListener('click', cerrarListado);
+actualizarListado();
+
+
 // ---- Paises en la busqueda del panel izquierdo ----
 const PAISES_BASE = [
   'Argentina',
@@ -87,7 +81,6 @@ const margen = () => innerWidth > 820
   ? { paddingTopLeft: [470, 90], paddingBottomRight: [30, 90] }
   : { paddingTopLeft: [20, 70], paddingBottomRight: [20, innerHeight * 0.6] };
 let actual = null, urlsMapa = [], urlsGal = [];
-aplicarPanelObras();
 const capa = L.layerGroup().addTo(map);
 
 // ---- Almacenamiento de fotos subidas (IndexedDB, en este navegador) ----
@@ -187,7 +180,7 @@ function mostrarLista() {
 function seleccionar(id) {
   const o = OBRAS.find(x => x.id === id);
   actual = id;
-  if (!obrasAbierto) { obrasAbierto = true; aplicarPanelObras(); }
+  if (!listadoAbierto) abrirListado();
   try { history.replaceState(null, '', '#' + id); } catch {}
   document.querySelectorAll('.pin').forEach(p => p.classList.toggle('sel', p.dataset.id === id));
   map.flyToBounds(L.latLngBounds(o.ruta || [o.coordenadas]).pad(0.6), { ...margen(), maxZoom: 8, duration: 1 });
