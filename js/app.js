@@ -167,7 +167,7 @@ function mostrarLista() {
   const cabeceraIdentica = `
     <header class="ex-cab" style="padding: 16px 46px 12px 18px; margin: -22px -22px 16px -22px; border-bottom: 1px solid var(--line);">
       <div>
-        <p class="ex-sup" style="margin: 0 0 3px; font: 700 10.5px 'JetBrains Mono',monospace; letter-spacing: .16em; text-transform: uppercase; color: var(--verde);">PORTAFOLIO EJECUTIVO</p>
+        <p class="ex-sup" style="margin: 0 0 3px; font: 700 10.5px 'JetBrains Mono',monospace; letter-spacing: .16em; text-transform: uppercase; color: var(--verde);">PORTAFOLIO 2 EJECUTIVO</p>
         <h2 style="margin: 0; font-size: 20px; letter-spacing: -.02em; font-weight: 800; color: #ffffff;">Proyectos - Obras</h2>
         <p class="ex-sub" style="margin: 4px 0 0; color: var(--muted); font-size: 12.5px;">${v.length} proyectos · portafolio completo</p>
       </div>
