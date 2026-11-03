@@ -148,7 +148,14 @@
   const mq = matchMedia('(min-width: 1200px)'); let abierto = mq.matches;
   function aplicar() {
     document.body.classList.toggle('exec-abierto', abierto); $('exec').hidden = !abierto;
-    const b = $('exec-toggle'); b.hidden = mq.matches; b.setAttribute('aria-expanded', String(abierto));
+    const b = $('exec-toggle');
+    // En escritorio, ocultar el botón solo mientras el panel está abierto.
+    // Al cerrar con la X, el botón vuelve a aparecer para poder abrirlo.
+    b.hidden = mq.matches && abierto;
+    b.setAttribute('aria-expanded', String(abierto));
+    b.setAttribute('aria-label', abierto ? 'Cerrar indicadores' : 'Abrir indicadores');
+    const etiqueta = $('exec-toggle-label');
+    if (etiqueta) etiqueta.textContent = abierto ? 'Cerrar indicadores' : 'Indicadores';
     if (typeof actual !== 'undefined' && !actual && typeof ajustarMapa === 'function') ajustarMapa();
   }
   mq.addEventListener('change', () => { abierto = mq.matches; aplicar(); });

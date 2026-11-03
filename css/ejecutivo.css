@@ -20,7 +20,7 @@
 .ex-sub{margin:6px 0 0;color:var(--muted);font-size:12.5px;line-height:1.5}
 .ex-chip{display:inline-block;padding:1px 8px;border-radius:999px;background:rgba(52,168,83,.18);color:#7fe39a;font-size:11.5px;font-weight:600}
 .ex-lnk{background:none;border:0;padding:0;color:#8fd3a0;font:600 12px Inter,sans-serif;text-decoration:underline;cursor:pointer}
-.ex-x{display:none;place-items:center;width:34px;height:34px;flex:none;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--text);cursor:pointer}
+.ex-x{display:grid;place-items:center;width:34px;height:34px;flex:none;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--text);cursor:pointer}
 .ex-cuerpo{flex:1;min-height:0;overflow:auto;scrollbar-width:thin;scrollbar-color:var(--verde) transparent}
 .ex-cuerpo::-webkit-scrollbar{width:6px}.ex-cuerpo::-webkit-scrollbar-thumb{background:var(--verde);border-radius:999px}
 .ex-sec{padding:16px 18px 14px;border-bottom:1px solid var(--line)}
@@ -82,16 +82,16 @@ button.ex-fila[aria-pressed="true"]{background:rgba(52,168,83,.16);box-shadow:in
 @media (prefers-reduced-motion:reduce){.eb i,.ex-ring .v,.ex-hero,button.ex-fila{transition:none}}
 
 /* botón "Indicadores" (tablet y móvil) */
-.exec-toggle{position:absolute;z-index:1000;top:90px;right:20px;display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;border:1px solid var(--line);background:var(--glass);color:var(--text);font:600 13px Inter,sans-serif;cursor:pointer;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.exec-toggle{position:absolute;z-index:1201;top:18px;right:72px;display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;border:1px solid var(--line);background:var(--glass);color:var(--text);font:600 13px Inter,sans-serif;cursor:pointer;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
 .exec-toggle .ic{width:16px;height:16px;color:var(--verde)}
-.exec-toggle[hidden],body.exec-abierto .exec-toggle{display:none}
+.exec-toggle[hidden]{display:none}
 
 /* desplazar controles del mapa para que no queden bajo el panel */
 @media (min-width:821px){
   body.exec-abierto .cta-wrap{right:calc(var(--exec-w) + 40px)}
   body.exec-abierto .leaflet-bottom.leaflet-right{right:calc(var(--exec-w) + 20px)}
 }
-/* Tablet: el panel es un cajón que se abre y se cierra */
+/* Tablet y escritorio: la X permite cerrar el panel */
 @media (max-width:1199px){
   .ex-x{display:grid}
   .exec{z-index:1100;box-shadow:0 18px 60px rgba(0,0,0,.65)}
