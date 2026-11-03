@@ -430,3 +430,41 @@ body.lista-abierta #detalle h3 {
     padding: 16px;
   }
 }
+
+/* 1. Asegurar que la columna contenedora izquierda ocupe todo el alto disponible */
+#ui {
+  position: absolute;
+  z-index: 1000;
+  left: 20px;
+  top: 20px;
+  bottom: 20px;
+  width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  pointer-events: none;
+}
+
+/* 2. Cuando el listado está abierto, hacemos que #detalle crezca para ocupar TODO el espacio sobrante */
+body.lista-abierta #ui {
+  bottom: 20px; /* Anclado al fondo */
+}
+
+body.lista-abierta #detalle {
+  display: flex !important;
+  flex-direction: column;
+  flex: 1 !important;           /* ¡CLAVE! Se estira para llenar todo el alto del contenedor */
+  max-height: none !important;  /* Eliminamos el tope rígido de 60vh / 70vh */
+  min-height: 0 !important;
+  height: 100%;
+  overflow: hidden;             /* Para que la cabecera quede fija arriba y solo scrolee la lista */
+}
+
+/* 3. Asegurar que la lista interna sea la que tenga scroll y llene el espacio */
+body.lista-abierta #detalle .lista-contenedor {
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--verde, #34A853) transparent;
+  padding-right: 4px;
+}
