@@ -93,6 +93,9 @@ async function dibujar() {
   const fecha = new Date(ACTUALIZADO + 'T12:00:00').toLocaleDateString('es-AR', { day: 'numeric', month: 'short', year: 'numeric' });
   $('stats').innerHTML = [[usd(vis.reduce((t, o) => t + o.inversion_usd, 0)), 'Inversión total'], [vis.length, 'Cantidad de Obras'],
     [new Set(vis.map(o => o.pais)).size, 'Cantidad de Países'], [fotosTotal, 'Imagenes Cargadas'], [fecha, 'Ultima Actualización']].map(([v, l]) => `<div><b>${v}</b><span>${l}</span></div>`).join('');
+
+  // Si el módulo ejecutivo ya está cargado, actualiza KPIs y panel con los proyectos visibles.
+  if (window.pintarEjecutivo) window.pintarEjecutivo(vis);
 }
 
 function ajustarMapa() {
