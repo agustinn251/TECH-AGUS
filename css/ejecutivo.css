@@ -36,11 +36,11 @@
     visibility: hidden !important;
   }
 
-  /* 3. Botón "Indicadores" arriba a la derecha, limpio y aislado */
+  /* 3. Botón "Indicadores" arriba a la derecha, debajo de la barra de datos */
   .exec-toggle {
     position: fixed !important;
-    top: 12px !important;
-    right: 12px !important;
+    top: 88px !important;
+    right: 10px !important;
     bottom: auto !important;
     height: 40px !important;
     padding: 8px 14px !important;
@@ -52,8 +52,8 @@
   /* 4. Botón de Datos alineado a la izquierda del botón Indicadores */
   .icono-datos {
     position: fixed !important;
-    top: 12px !important;
-    right: 155px !important;
+    top: 88px !important;
+    right: 152px !important;
     bottom: auto !important;
     width: 40px !important;
     height: 40px !important;
@@ -69,5 +69,23 @@
     left: 10px !important;
     right: 10px !important;
     justify-content: center !important;
+  }
+
+  /* El panel abierto ya trae su propia X: evitamos duplicar botones flotantes */
+  body.exec-abierto .exec-toggle,
+  body.exec-abierto .icono-datos {
+    display: none !important;
+  }
+}
+
+/* Tablet y ventanas angostas: la barra de KPIs llega hasta el borde derecho,
+   así que el botón "Indicadores" baja para no taparla. */
+@media (min-width: 821px) and (max-width: 1399px) {
+  .exec-toggle {
+    top: 96px;
+    right: 20px;
+  }
+  body.exec-abierto .exec-toggle {
+    display: none;
   }
 }
