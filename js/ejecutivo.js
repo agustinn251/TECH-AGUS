@@ -82,7 +82,7 @@
     return `<svg class="ex-ring" viewBox="0 0 64 64" aria-hidden="true"><g transform="rotate(-90 32 32)"><circle class="p" cx="32" cy="32" r="26"/><circle class="v" cx="32" cy="32" r="26" style="stroke:${c}" stroke-dasharray="${(C * p / 100).toFixed(1)} ${C.toFixed(1)}"/></g><text x="32" y="37" text-anchor="middle">${fmt(p)}%</text></svg>`; };
 
   function pintarPanel(m) {
-    const cab = `<header class="ex-cab"><div><p class="ex-sup">Portafolio Ejecutivo</p><h2>Panel ejecutivo</h2>
+    const cab = `<header class="ex-cab"><div><p class="ex-sup">PORTAFOLIO EJECUTIVO</p><h2>Proyectos - Obras</h2>
       <p class="ex-sub">${fmt(m.n)} ${m.n === 1 ? 'proyecto' : 'proyectos'}${filtrado() ? ' · <span class="ex-chip">Vista filtrada</span> <button class="ex-lnk" id="ex-limpiar">Limpiar</button>' : ' · portafolio completo'}</p></div>
       <button class="ex-x" id="exec-cerrar" aria-label="Ocultar el panel ejecutivo">✕</button></header>`;
     if (!m.n) { $('exec').innerHTML = cab + '<div class="ex-cuerpo"><p class="ex-vacio">No hay proyectos con los filtros actuales.</p></div>'; return; }

@@ -30,7 +30,7 @@ p.desc{line-height:1.6;font-size:14.5px;margin:0;color:#d5dae1}
 ul{padding-left:18px;line-height:1.55;margin:0;font-size:14.5px}
 .hitos{list-style:none;padding:0;border-left:2px solid var(--line)}
 .hitos li{padding:0 0 12px 16px;position:relative}
-.hitos li::before{content:"";position:absolute;left:-6px;top:6px;width:10px;height:10px;border-radius:50%;background:var(--c)}
+.hitos li::before{content:"";position:absolute;left:-6px;top:6px;width:100px;height:10px;border-radius:50%;background:var(--c)}
 .hitos small{color:var(--muted);display:block;font-size:12px}
 .galeria{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .galeria img,.vacio{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:12px}

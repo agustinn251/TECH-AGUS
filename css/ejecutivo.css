@@ -14,13 +14,19 @@
 /* ---- Panel ejecutivo (derecha) ---- */
 .exec{position:absolute;z-index:1000;right:20px;top:90px;bottom:20px;width:var(--exec-w);display:flex;flex-direction:column;overflow:hidden;padding:0;
   background:linear-gradient(180deg,rgba(14,21,36,.93),rgba(8,12,22,.95));border-color:rgba(120,150,200,.16);box-shadow:0 18px 50px rgba(0,0,0,.45)}
-.ex-cab{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:16px 18px 12px;border-bottom:1px solid var(--line)}
-.ex-sup{margin:0 0 3px;font:600 10.5px 'JetBrains Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--verde)}
-.ex-cab h2{margin:0;font-size:20px;letter-spacing:-.02em}
+
+/* Ajuste de Cabecera para posicionar la cruz perfectamente adentro */
+.ex-cab{position:relative;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:18px 46px 14px 18px;border-bottom:1px solid var(--line)}
+.ex-sup{margin:0 0 3px;font:700 10.5px 'JetBrains Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--verde)}
+.ex-cab h2{margin:0;font-size:20px;letter-spacing:-.02em;font-weight:800;color:#ffffff}
 .ex-sub{margin:6px 0 0;color:var(--muted);font-size:12.5px;line-height:1.5}
 .ex-chip{display:inline-block;padding:1px 8px;border-radius:999px;background:rgba(52,168,83,.18);color:#7fe39a;font-size:11.5px;font-weight:600}
 .ex-lnk{background:none;border:0;padding:0;color:#8fd3a0;font:600 12px Inter,sans-serif;text-decoration:underline;cursor:pointer}
-.ex-x{display:grid;place-items:center;width:34px;height:34px;flex:none;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--text);cursor:pointer}
+
+/* Posicionamiento absoluto ajustado para el botón X adentro del cuadro */
+.ex-x{position:absolute;top:16px;right:16px;display:grid;place-items:center;width:34px;height:34px;flex:none;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--text);cursor:pointer;transition:background 0.2s, color 0.2s}
+.ex-x:hover{background:rgba(255,255,255,.15);color:#ffffff}
+
 .ex-cuerpo{flex:1;min-height:0;overflow:auto;scrollbar-width:thin;scrollbar-color:var(--verde) transparent}
 .ex-cuerpo::-webkit-scrollbar{width:6px}.ex-cuerpo::-webkit-scrollbar-thumb{background:var(--verde);border-radius:999px}
 .ex-sec{padding:16px 18px 14px;border-bottom:1px solid var(--line)}
