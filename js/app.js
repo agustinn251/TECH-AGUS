@@ -1,6 +1,14 @@
 const $ = id => document.getElementById(id);
 const movil = innerWidth <= 820;
-const map = L.map('map', { zoomControl: false }).setView([-30, -68], 4);
+// Evita que el mundo se reduzca a una baldosa pequeña y deje franjas negras.
+// El mínimo se adapta a la altura de la ventana (zoom 2 como piso).
+const zoomMinimo = Math.max(2, Math.ceil(Math.log2(Math.max(256, innerHeight) / 256)));
+const map = L.map('map', { zoomControl: false, minZoom: zoomMinimo }).setView([-30, -68], 4);
+window.addEventListener('resize', () => {
+  map.invalidateSize();
+  const nuevoMinimo = Math.max(2, Math.ceil(Math.log2(Math.max(256, map.getSize().y) / 256)));
+  map.setMinZoom(nuevoMinimo);
+});
 L.control.zoom({ position: 'bottomright' }).addTo(map);
 
 const esri = (capa, max) => L.tileLayer(
