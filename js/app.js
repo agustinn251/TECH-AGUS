@@ -79,15 +79,27 @@ function tarjetaResp({ rol, nombre, cargo, foto, stats = [], variante = '' }) {
 }
 
 // Responsable de la obra; si no hay, cae al responsable del país.
-function bloqueResponsable(o) {
-  const propio = o.responsable && (o.responsable.nombre || o.responsable.foto)
-    ? { rol: 'Responsable de obra', nombre: o.responsable.nombre, cargo: o.responsable.cargo, foto: o.responsable.foto } : null;
+function datosResponsable(o) {
+  if (o.responsable && (o.responsable.nombre || o.responsable.foto))
+    return { rol: 'Responsable de obra', nombre: o.responsable.nombre, cargo: o.responsable.cargo, foto: o.responsable.foto };
   const p = responsablePais(o.pais);
-  const dePais = p && (p.responsable || p.foto)
-    ? { rol: 'Responsable del país', nombre: p.responsable, cargo: p.cargo, foto: p.foto } : null;
-  const r = propio || dePais;
+  if (p && (p.responsable || p.foto))
+    return { rol: 'Responsable del país', nombre: p.responsable, cargo: p.cargo, foto: p.foto };
+  return null;
+}
+
+function bloqueResponsable(o) {
+  const r = datosResponsable(o);
   if (!r) return '';
   return tarjetaResp({ ...r, stats: [[o.avance_pct == null ? 's/d' : o.avance_pct + '%', 'avance'], [usd(o.inversion_usd), 'inversión']] });
+}
+
+// Avatar chico para el listado de obras.
+function avatarMini(r) {
+  if (!r) return '';
+  const f = fotoUrl(r.foto);
+  const img = f ? `<img src="${escH(f)}" alt="" loading="lazy" onerror="this.parentNode.classList.add('sin-foto');this.remove()">` : '';
+  return `<span class="obra-ava${f ? '' : ' sin-foto'}" data-ini="${escH(iniciales(r.nombre))}" title="${escH([r.nombre, r.cargo].filter(Boolean).join(' · '))}">${img}</span>`;
 }
 const norm = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 const visibles = () => OBRAS.filter(o => (f.pais === 'Todos' || o.pais === f.pais) && (!f.tipo || o.tipo === f.tipo) &&
@@ -174,10 +186,12 @@ if ($('paises')) $('paises').onclick = e => { const b = e.target.closest('[data-
 if ($('tipos')) $('tipos').onclick = e => { const b = e.target.closest('[data-tipo]'); if (b) { f.tipo = f.tipo === b.dataset.tipo ? null : b.dataset.tipo; refrescar(); } };
 if ($('buscar')) $('buscar').oninput = e => { f.q = e.target.value.trim(); mostrarLista(); dibujar(); ajustarMapa(); };
 
-const tarjeta = o => `<button class="obra" data-id="${o.id}" style="--c:${color(o)}"><span class="dot"></span><b>${o.nombre}</b>
+const tarjeta = o => {
+  const r = datosResponsable(o);
+  return `<button class="obra${r ? ' con-resp' : ''}" data-id="${o.id}" style="--c:${color(o)}"><span class="dot"></span><b>${o.nombre}</b>
   <span class="monto">${usd(o.inversion_usd)}</span><small>${o.pais} · ${o.tipo} · ${o.estado}</small>
-  ${o.avance_pct == null ? '' : `<i class="mini"><u style="width:${o.avance_pct}%"></u></i>`}</button>`;
-
+  ${o.avance_pct == null ? '' : `<i class="mini"><u style="width:${o.avance_pct}%"></u></i>`}${avatarMini(r)}</button>`;
+};
 function mostrarLista() {
   actual = null;
   try { history.replaceState(null, '', location.pathname + location.search); } catch {}
@@ -206,6 +220,7 @@ function mostrarLista() {
     </header>
   `;
 
+  $detalle.classList.remove('detalle-obra');
   $detalle.innerHTML = cabeceraIdentica + `<div class="lista-contenedor">${contenidoObras}</div>`;
   $detalle.scrollTop = 0;
 
@@ -225,6 +240,7 @@ function seleccionar(id) {
     : `<div class="barra" role="progressbar" aria-valuenow="${o.avance_pct}" aria-valuemin="0" aria-valuemax="100"><i style="width:${o.avance_pct}%"></i></div>
        <p class="nota">Avance: ${o.avance_pct} %</p>`;
   $detalle.style.setProperty('--c', color(o));
+  $detalle.classList.add('detalle-obra');
   $detalle.innerHTML = `
     <div class="fila"><button class="cerrar" id="volver">← Todas las obras</button>
       <span class="nav"><button class="cerrar" id="prev" aria-label="Obra anterior">‹</button><button class="cerrar" id="next" aria-label="Obra siguiente">›</button></span></div>
