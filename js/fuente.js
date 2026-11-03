@@ -32,9 +32,10 @@
     const m = {}; Object.keys(fila).forEach(k => m[K(k)] = fila[k]);
     const g = c => { for (const s of SIN[c]) if (m[s] !== undefined && m[s] !== null && m[s] !== '') return m[s]; return undefined; };
     const nombre = String(g('nombre') ?? '').trim(); if (!nombre) return { omitida: 'fila sin nombre' };
-    // Fila de país: se marca con un ID tipo "pais-argentina" y no lleva coordenadas.
-    // Sirve solo para la tarjeta del responsable del país, nunca se dibuja en el mapa.
-    if (/^pais[\s_-]/i.test(String(g('id') ?? '').trim())) {
+    // Fila de país: se reconoce por el ID tipo "pais-argentina" o por Tipo = "País".
+    // No lleva coordenadas: sirve solo para la tarjeta del responsable del país, nunca va al mapa.
+    const idCrudo = String(g('id') ?? '').trim();
+    if (/^pais[\s_-]/i.test(idCrudo) || K(String(g('mercado') ?? '')) === 'pais') {
       return { pais: {
         nombre: String(g('pais') ?? nombre).trim() || nombre,
         responsable: String(g('responsable') ?? '').trim(),
