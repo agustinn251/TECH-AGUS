@@ -80,12 +80,45 @@
 
 /* Tablet y ventanas angostas: la barra de KPIs llega hasta el borde derecho,
    así que el botón "Indicadores" baja para no taparla. */
-@media (min-width: 821px) and (max-width: 1399px) {
+@media (min-width: 821px) and (max-width: 1499px) {
   .exec-toggle {
     top: 96px;
     right: 20px;
   }
   body.exec-abierto .exec-toggle {
     display: none;
+  }
+
+  /* Los 5 KPIs no entran en el ancho disponible: en vez de comprimirlos
+     (y que se pisen), la barra scrollea en horizontal con ítems rígidos. */
+  .stats {
+    max-width: calc(100% - 460px - 20px);
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
+  .stats::-webkit-scrollbar {
+    display: none;
+  }
+  .stats .k {
+    flex: 0 0 auto;
+    padding: 10px 14px;
+    gap: 9px;
+  }
+  .stats .k .ic {
+    flex: none;
+  }
+  .stats .k-t {
+    min-width: max-content;
+  }
+  .stats .k-t b {
+    font-size: 16px;
+  }
+  .stats .k-t small {
+    font-size: 9.5px;
+    letter-spacing: .05em;
   }
 }
