@@ -162,6 +162,9 @@
     const s = String(u ?? '').trim();
     if (!s) return '';
     if (/^data:image\//i.test(s)) return s;
+    // Link de Google Imágenes ("imgres"): la imagen real viene en ?imgurl=
+    const gi = s.match(/[?&]imgurl=([^&]+)/);
+    if (gi) { try { return fotoPerfil(decodeURIComponent(gi[1])); } catch { return s; } }
     if (/drive\.google\.com|docs\.google\.com/.test(s)) {
       const m = s.match(/\/d\/([\w-]{10,})/) || s.match(/[?&]id=([\w-]{10,})/);
       if (m) return `https://drive.google.com/thumbnail?id=${m[1]}&sz=w600`;
