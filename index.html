@@ -30,34 +30,20 @@
   </header>
   
 <section id="detalle" class="card"></section>
+</main>
 
-<button id="obras-toggle" class="obras-toggle"
-        aria-expanded="false" aria-controls="detalle">
-  <span>☷</span>
-  Obras
+<!-- Controles plegables del panel izquierdo -->
+<button id="obras-toggle" class="obras-toggle" type="button"
+        aria-expanded="false" aria-controls="ui" hidden>
+  <span aria-hidden="true">☷</span>
+  <span>Obras</span>
   <b id="obras-count">0</b>
 </button>
-
-<button id="obras-cerrar" class="obras-cerrar"
-        aria-label="Cerrar listado de obras">
+<button id="obras-cerrar" class="obras-cerrar" type="button"
+        aria-label="Cerrar panel de obras" title="Cerrar panel de obras" hidden>
   ✕
 </button>
 
-<!-- Botón desplegable del listado de obras -->
-<button id="obras-toggle" class="obras-toggle"
-        aria-expanded="false" aria-controls="detalle">
-  <span>☷</span>
-  Obras
-  <b id="obras-count">19</b>
-</button>
-
-<!-- Botón para cerrar el listado -->
-<button id="obras-cerrar" class="obras-cerrar"
-        aria-label="Cerrar listado de obras">
-  ✕
-</button>
-
-</main>
 <button id="datos-btn" class="icono-datos" aria-label="Datos del mapa: importar o exportar" title="Datos"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg></button>
 <div id="stats" class="stats card" aria-label="Resumen"></div>
 <!-- Panel ejecutivo -->

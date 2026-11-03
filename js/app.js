@@ -30,24 +30,41 @@ map.on('zoomend', ajustarZoom); ajustarZoom();
 
 const $detalle = $('detalle'), visor = $('visor');
 
-// ---- Panel desplegable del listado de obras en móviles ----
+// ---- Panel plegable de obras (mismo criterio de apertura/cierre que Indicadores) ----
 const obrasToggle = $('obras-toggle');
 const obrasCerrar = $('obras-cerrar');
+const obrasMq = matchMedia('(min-width: 1200px)');
+let obrasAbierto = obrasMq.matches;
 
-function abrirListado() {
-  document.body.classList.add('lista-abierta');
-  obrasToggle.setAttribute('aria-expanded', 'true');
+function aplicarPanelObras() {
+  document.body.classList.toggle('obras-abierto', obrasAbierto);
+  document.body.classList.toggle('obras-cerrado', !obrasAbierto);
+
+  // El botón de apertura aparece cuando el panel está cerrado.
+  obrasToggle.hidden = obrasAbierto;
+  obrasCerrar.hidden = !obrasAbierto;
+  obrasToggle.setAttribute('aria-expanded', String(obrasAbierto));
+  obrasToggle.setAttribute('aria-label', obrasAbierto ? 'Cerrar panel de obras' : 'Abrir panel de obras');
+
+  // Recalcular el mapa para aprovechar el espacio cuando el panel se pliega.
+  map.invalidateSize();
+  if (!actual) ajustarMapa();
 }
 
-function cerrarListado() {
-  document.body.classList.remove('lista-abierta');
-  obrasToggle.setAttribute('aria-expanded', 'false');
-}
+obrasToggle.addEventListener('click', () => {
+  obrasAbierto = true;
+  aplicarPanelObras();
+});
 
-obrasToggle.onclick = abrirListado;
-obrasCerrar.onclick = cerrarListado;
+obrasCerrar.addEventListener('click', () => {
+  obrasAbierto = false;
+  aplicarPanelObras();
+});
 
-
+obrasMq.addEventListener('change', () => {
+  obrasAbierto = obrasMq.matches;
+  aplicarPanelObras();
+});
 // ---- Paises en la busqueda del panel izquierdo ----
 const PAISES_BASE = [
   'Argentina',
@@ -70,6 +87,7 @@ const margen = () => innerWidth > 820
   ? { paddingTopLeft: [470, 90], paddingBottomRight: [30, 90] }
   : { paddingTopLeft: [20, 70], paddingBottomRight: [20, innerHeight * 0.6] };
 let actual = null, urlsMapa = [], urlsGal = [];
+aplicarPanelObras();
 const capa = L.layerGroup().addTo(map);
 
 // ---- Almacenamiento de fotos subidas (IndexedDB, en este navegador) ----
@@ -154,6 +172,7 @@ function mostrarLista() {
   try { history.replaceState(null, '', location.pathname + location.search); } catch {}
   document.querySelectorAll('.pin').forEach(p => p.classList.remove('sel'));
   const v = visibles();
+  $('obras-count').textContent = v.length;
   let cuerpo;
   if (!v.length) cuerpo = '<div class="vacio-lista"><p>No hay obras con ese filtro.</p><button class="btn" id="limpiar">Ver todas</button></div>';
   else if (f.pais !== 'Todos') cuerpo = v.map(tarjeta).join('');
@@ -168,6 +187,7 @@ function mostrarLista() {
 function seleccionar(id) {
   const o = OBRAS.find(x => x.id === id);
   actual = id;
+  if (!obrasAbierto) { obrasAbierto = true; aplicarPanelObras(); }
   try { history.replaceState(null, '', '#' + id); } catch {}
   document.querySelectorAll('.pin').forEach(p => p.classList.toggle('sel', p.dataset.id === id));
   map.flyToBounds(L.latLngBounds(o.ruta || [o.coordenadas]).pad(0.6), { ...margen(), maxZoom: 8, duration: 1 });
