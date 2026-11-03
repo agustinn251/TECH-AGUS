@@ -1,7 +1,5 @@
 const $ = id => document.getElementById(id);
 const movil = innerWidth <= 820;
-// Evita que el mundo se reduzca a una baldosa pequeña y deje franjas negras.
-// El mínimo se adapta a la altura de la ventana (zoom 2 como piso).
 const zoomMinimo = Math.max(2, Math.ceil(Math.log2(Math.max(256, innerHeight) / 256)));
 const map = L.map('map', { zoomControl: false, minZoom: zoomMinimo }).setView([-30, -68], 4);
 window.addEventListener('resize', () => {
@@ -27,19 +25,17 @@ L.control.layers({ 'Oscuro': oscuro, 'Satélite': satelite, 'Calles': esri('Worl
 const ajustarZoom = () => { const c = map.getContainer().classList; c.toggle('zoom-alto', map.getZoom() > 7); c.toggle('zoom-bajo', map.getZoom() < 5); };
 map.on('zoomend', ajustarZoom); ajustarZoom();
 
-
 const $detalle = $('detalle'), visor = $('visor');
 
-// ---- Desplegable SOLO del listado de obras; el encabezado queda siempre visible ----
 const obrasToggle = $('obras-toggle');
-const obrasCerrar = $('obras-cerrar');
 let listadoAbierto = !matchMedia('(max-width: 820px)').matches;
 
 function actualizarListado() {
   document.body.classList.toggle('lista-abierta', listadoAbierto);
-  obrasToggle.hidden = listadoAbierto;
-  obrasCerrar.hidden = !listadoAbierto;
-  obrasToggle.setAttribute('aria-expanded', String(listadoAbierto));
+  if (obrasToggle) {
+    obrasToggle.hidden = listadoAbierto;
+    obrasToggle.setAttribute('aria-expanded', String(listadoAbierto));
+  }
 }
 
 function abrirListado() {
@@ -54,27 +50,15 @@ function cerrarListado() {
   map.invalidateSize();
 }
 
-obrasToggle.addEventListener('click', abrirListado);
-obrasCerrar.addEventListener('click', cerrarListado);
+if (obrasToggle) obrasToggle.addEventListener('click', abrirListado);
 actualizarListado();
 
-
-// ---- Paises en la busqueda del panel izquierdo ----
-const PAISES_BASE = [
-  'Argentina',
-  'Chile',
-  'Perú',
-  'Brasil',
-  'México',
-  'Ecuador',
-  
-];
-// Si agregás un proyecto de otro país en el Excel, aparece solo al final de la lista.
+const PAISES_BASE = ['Argentina', 'Chile', 'Perú', 'Brasil', 'México', 'Ecuador'];
 const PAISES = [...new Set([...PAISES_BASE, ...OBRAS.map(o => o.pais)])];
 const f = { pais: 'Todos', tipo: null, q: '' };
 const color = o => COLORES[o.tipo] || '#ccc';
 const usd = n => !n ? 's/d' : 'US$ ' + (n >= 1e9 ? (n / 1e9).toLocaleString('es-AR') + ' mil M' : (n / 1e6).toLocaleString('es-AR') + ' M');
-const norm = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+const norm = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 const visibles = () => OBRAS.filter(o => (f.pais === 'Todos' || o.pais === f.pais) && (!f.tipo || o.tipo === f.tipo) &&
   (!f.q || norm([o.nombre, o.ubicacion, o.pais, o.tipo, o.descripcion, ...o.colaboradores].join(' ')).includes(norm(f.q))));
 const margen = () => innerWidth > 820
@@ -83,7 +67,6 @@ const margen = () => innerWidth > 820
 let actual = null, urlsMapa = [], urlsGal = [];
 const capa = L.layerGroup().addTo(map);
 
-// ---- Almacenamiento de fotos subidas (IndexedDB, en este navegador) ----
 const abrirDB = () => new Promise((ok, mal) => {
   const r = indexedDB.open('megaobras', 1);
   r.onupgradeneeded = () => r.result.createObjectStore('fotos', { keyPath: 'id', autoIncrement: true }).createIndex('obra', 'obra');
@@ -98,7 +81,7 @@ const fotosDe = obra => pedir('readonly', s => s.index('obra').getAll(obra));
 const guardarFoto = (obra, blob, nombre) => pedir('readwrite', s => s.add({ obra, blob, nombre }));
 const borrarFoto = id => pedir('readwrite', s => s.delete(id));
 
-async function reducir(file) { // máx. 1600 px
+async function reducir(file) {
   try {
     const bmp = await createImageBitmap(file);
     const k = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
@@ -109,7 +92,6 @@ async function reducir(file) { // máx. 1600 px
   } catch { return file; }
 }
 
-// ---- Mapa: marcadores con foto, rutas y estadísticas (solo las obras visibles) ----
 async function dibujar() {
   let subidas = []; try { subidas = await todasLasFotos(); } catch {}
   urlsMapa.forEach(u => URL.revokeObjectURL(u)); urlsMapa = [];
@@ -129,10 +111,12 @@ async function dibujar() {
     if (o.ruta) L.polyline(o.ruta, { color: color(o), weight: 4, dashArray: '8 6' }).addTo(capa);
   });
   const fecha = new Date(ACTUALIZADO + 'T12:00:00').toLocaleDateString('es-AR', { day: 'numeric', month: 'short', year: 'numeric' });
-  $('stats').innerHTML = [[usd(vis.reduce((t, o) => t + o.inversion_usd, 0)), 'Inversión total'], [vis.length, 'Cantidad de Obras'],
-    [new Set(vis.map(o => o.pais)).size, 'Cantidad de Países'], [fotosTotal, 'Imagenes Cargadas'], [fecha, 'Ultima Actualización']].map(([v, l]) => `<div><b>${v}</b><span>${l}</span></div>`).join('');
+  const $stats = $('stats');
+  if ($stats) {
+    $stats.innerHTML = [[usd(vis.reduce((t, o) => t + o.inversion_usd, 0)), 'Inversión total'], [vis.length, 'Cantidad de Obras'],
+      [new Set(vis.map(o => o.pais)).size, 'Cantidad de Países'], [fotosTotal, 'Imagenes Cargadas'], [fecha, 'Ultima Actualización']].map(([v, l]) => `<div><b>${v}</b><span>${l}</span></div>`).join('');
+  }
 
-  // Si el módulo ejecutivo ya está cargado, actualiza KPIs y panel con los proyectos visibles.
   if (window.pintarEjecutivo) window.pintarEjecutivo(vis);
 }
 
@@ -141,21 +125,24 @@ function ajustarMapa() {
   if (pts.length) map.flyToBounds(L.latLngBounds(pts).pad(0.25), { ...margen(), maxZoom: 7, duration: 0.9 });
 }
 
-// ---- Filtros: país, tipo y búsqueda ----
 function pintarFiltros() {
-  $('paises').innerHTML = ['Todos', ...PAISES].map(p => {
-    const n = p === 'Todos' ? OBRAS.length : OBRAS.filter(o => o.pais === p).length;
-    return `<button data-pais="${p}" aria-pressed="${f.pais === p}">${p}<sup>${n}</sup></button>`;
-  }).join('');
-  $('tipos').innerHTML = Object.keys(COLORES).filter(t => OBRAS.some(o => o.tipo === t)).map(t =>
-    `<button data-tipo="${t}" style="--c:${COLORES[t]}" aria-pressed="${f.tipo === t}">${t}</button>`).join('');
+  const $paises = $('paises'), $tipos = $('tipos');
+  if ($paises) {
+    $paises.innerHTML = ['Todos', ...PAISES].map(p => {
+      const n = p === 'Todos' ? OBRAS.length : OBRAS.filter(o => o.pais === p).length;
+      return `<button data-pais="${p}" aria-pressed="${f.pais === p}">${p}<sup>${n}</sup></button>`;
+    }).join('');
+  }
+  if ($tipos) {
+    $tipos.innerHTML = Object.keys(COLORES).filter(t => OBRAS.some(o => o.tipo === t)).map(t =>
+      `<button data-tipo="${t}" style="--c:${COLORES[t]}" aria-pressed="${f.tipo === t}">${t}</button>`).join('');
+  }
 }
 function refrescar() { pintarFiltros(); mostrarLista(); dibujar(); ajustarMapa(); }
-$('paises').onclick = e => { const b = e.target.closest('[data-pais]'); if (b) { f.pais = b.dataset.pais; refrescar(); } };
-$('tipos').onclick = e => { const b = e.target.closest('[data-tipo]'); if (b) { f.tipo = f.tipo === b.dataset.tipo ? null : b.dataset.tipo; refrescar(); } };
-$('buscar').oninput = e => { f.q = e.target.value.trim(); mostrarLista(); dibujar(); ajustarMapa(); };
+if ($('paises')) $('paises').onclick = e => { const b = e.target.closest('[data-pais]'); if (b) { f.pais = b.dataset.pais; refrescar(); } };
+if ($('tipos')) $('tipos').onclick = e => { const b = e.target.closest('[data-tipo]'); if (b) { f.tipo = f.tipo === b.dataset.tipo ? null : b.dataset.tipo; refrescar(); } };
+if ($('buscar')) $('buscar').oninput = e => { f.q = e.target.value.trim(); mostrarLista(); dibujar(); ajustarMapa(); };
 
-// ---- Lista de obras ----
 const tarjeta = o => `<button class="obra" data-id="${o.id}" style="--c:${color(o)}"><span class="dot"></span><b>${o.nombre}</b>
   <span class="monto">${usd(o.inversion_usd)}</span><small>${o.pais} · ${o.tipo} · ${o.estado}</small>
   ${o.avance_pct == null ? '' : `<i class="mini"><u style="width:${o.avance_pct}%"></u></i>`}</button>`;
@@ -165,18 +152,36 @@ function mostrarLista() {
   try { history.replaceState(null, '', location.pathname + location.search); } catch {}
   document.querySelectorAll('.pin').forEach(p => p.classList.remove('sel'));
   const v = visibles();
-  $('obras-count').textContent = v.length;
-  let cuerpo;
-  if (!v.length) cuerpo = '<div class="vacio-lista"><p>No hay obras con ese filtro.</p><button class="btn" id="limpiar">Ver todas</button></div>';
-  else if (f.pais !== 'Todos') cuerpo = v.map(tarjeta).join('');
-  else cuerpo = PAISES.map(p => [p, v.filter(o => o.pais === p)]).filter(g => g[1].length)
+  const $cnt = $('obras-count');
+  if ($cnt) $cnt.textContent = v.length;
+  
+  let contenidoObras;
+  if (!v.length) contenidoObras = '<div class="vacio-lista"><p>No hay obras con ese filtro.</p><button class="btn" id="limpiar">Ver todas</button></div>';
+  else if (f.pais !== 'Todos') contenidoObras = v.map(tarjeta).join('');
+  else contenidoObras = PAISES.map(p => [p, v.filter(o => o.pais === p)]).filter(g => g[1].length)
     .map(([p, l]) => `<h3>${p} · ${l.length}</h3>${l.map(tarjeta).join('')}`).join('');
+  
   $detalle.style.removeProperty('--c');
-  $detalle.innerHTML = `<p class="nota resumen">${v.length} obra${v.length === 1 ? '' : 's'}. Tocá una para ver el detalle.</p>${cuerpo}`;
+  
+  // AQUÍ ESTÁ EL CAMBIO CLAVE: Estructura del Header idéntica al Panel Ejecutivo de la foto 1
+  const cabeceraIdentica = `
+    <header class="ex-cab" style="padding: 16px 46px 12px 18px; margin: -22px -22px 16px -22px; border-bottom: 1px solid var(--line);">
+      <div>
+        <p class="ex-sup" style="margin: 0 0 3px; font: 700 10.5px 'JetBrains Mono',monospace; letter-spacing: .16em; text-transform: uppercase; color: var(--verde);">PORTAFOLIO EJECUTIVO</p>
+        <h2 style="margin: 0; font-size: 20px; letter-spacing: -.02em; font-weight: 800; color: #ffffff;">Proyectos - Obras</h2>
+        <p class="ex-sub" style="margin: 4px 0 0; color: var(--muted); font-size: 12.5px;">${v.length} proyectos · portafolio completo</p>
+      </div>
+      <button class="ex-x" id="btn-cerrar-listado" aria-label="Cerrar listado">✕</button>
+    </header>
+  `;
+
+  $detalle.innerHTML = cabeceraIdentica + `<div class="lista-contenedor">${contenidoObras}</div>`;
   $detalle.scrollTop = 0;
+
+  const btnCerrar = $('btn-cerrar-listado');
+  if (btnCerrar) btnCerrar.onclick = cerrarListado;
 }
 
-// ---- Detalle de una obra ----
 function seleccionar(id) {
   const o = OBRAS.find(x => x.id === id);
   actual = id;
@@ -236,36 +241,37 @@ $detalle.addEventListener('click', async e => {
     const v = visibles(), i = v.findIndex(o => o.id === actual), d = t.closest('#next') ? 1 : -1;
     return seleccionar(v[(i + d + v.length) % v.length].id);
   }
-  if (t.closest('#limpiar')) { Object.assign(f, { pais: 'Todos', tipo: null, q: '' }); $('buscar').value = ''; return refrescar(); }
+  if (t.closest('#limpiar')) { Object.assign(f, { pais: 'Todos', tipo: null, q: '' }); if ($('buscar')) $('buscar').value = ''; return refrescar(); }
   if (t.closest('[data-abrir]')) return abrirSubida();
   const b = t.closest('.borrar');
   if (b) { await borrarFoto(Number(b.dataset.id)); dibujar(); return pintarGaleria(); }
   const img = t.closest('.galeria img');
   if (img) { visor.querySelector('img').src = img.src; visor.showModal(); }
 });
-visor.onclick = () => visor.close();
+if (visor) visor.onclick = () => visor.close();
 
-// ---- Subir fotos (botón destacado) ----
 const $modal = $('subida'), $sel = $('obra-sel'), $msg = $('msg'), zona = $('zona');
-$sel.innerHTML = OBRAS.map(o => `<option value="${o.id}">${o.nombre}</option>`).join('');
-function abrirSubida() { $sel.value = actual || visibles()[0]?.id || OBRAS[0].id; $msg.textContent = ''; $modal.showModal(); }
-$('cta').onclick = abrirSubida;
-$('cerrar-modal').onclick = () => $modal.close();
+if ($sel) $sel.innerHTML = OBRAS.map(o => `<option value="${o.id}">${o.nombre}</option>`).join('');
+function abrirSubida() { if ($sel) $sel.value = actual || visibles()[0]?.id || OBRAS[0].id; if ($msg) $msg.textContent = ''; if ($modal) $modal.showModal(); }
+if ($('cta')) $('cta').onclick = abrirSubida;
+if ($('cerrar-modal')) $('cerrar-modal').onclick = () => $modal.close();
 
 async function importar(files) {
   const imgs = [...files].filter(f => f.type.startsWith('image/'));
-  if (!imgs.length) { $msg.textContent = 'No encontré imágenes. Para una carpeta, usá "Importar carpeta".'; return; }
-  $msg.textContent = `Importando ${imgs.length}…`;
+  if (!imgs.length) { if ($msg) $msg.textContent = 'No encontré imágenes. Para una carpeta, usá "Importar carpeta".'; return; }
+  if ($msg) $msg.textContent = `Importando ${imgs.length}…`;
   try {
     for (const f of imgs) await guardarFoto($sel.value, await reducir(f), f.name);
-    $msg.textContent = `${imgs.length} imagen(es) agregada(s) a esta obra.`;
-  } catch { $msg.textContent = 'No se pudieron guardar las imágenes.'; }
+    if ($msg) $msg.textContent = `${imgs.length} imagen(es) agregada(s) a esta obra.`;
+  } catch { if ($msg) $msg.textContent = 'No se pudieron guardar las imágenes.'; }
   dibujar(); pintarGaleria();
 }
-for (const id of ['subir', 'carpeta']) $(id).onchange = e => { importar(e.target.files); e.target.value = ''; };
-zona.ondragover = e => { e.preventDefault(); zona.classList.add('sobre'); };
-zona.ondragleave = () => zona.classList.remove('sobre');
-zona.ondrop = e => { e.preventDefault(); zona.classList.remove('sobre'); importar(e.dataTransfer.files); };
+for (const id of ['subir', 'carpeta']) if ($(id)) $(id).onchange = e => { importar(e.target.files); e.target.value = ''; };
+if (zona) {
+  zona.ondragover = e => { e.preventDefault(); zona.classList.add('sobre'); };
+  zona.ondragleave = () => zona.classList.remove('sobre');
+  zona.ondrop = e => { e.preventDefault(); zona.classList.remove('sobre'); importar(e.dataTransfer.files); };
+}
 
 pintarFiltros();
 const inicio = OBRAS.find(o => o.id === location.hash.slice(1));
