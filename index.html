@@ -28,8 +28,6 @@
     <input id="buscar" type="search" placeholder="Buscar obra, lugar o empresa" aria-label="Buscar obra">
     <nav id="tipos" class="chips" aria-label="Tipo de obra"></nav>
   </header>
-  
-
   <div class="obras-controls">
     <button id="obras-toggle" class="obras-toggle" type="button"
             aria-expanded="false" aria-controls="detalle">
@@ -63,6 +61,9 @@
     <span id="exec-toggle-label">Indicadores</span>
 </button>  
 <div class="cta-wrap"><button id="cta" class="cta"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>En Construcción</button></div>
+<!-- 
+Boton de subida de fotos de obras, solo visible para administradores:
+
 <dialog id="subida" class="modal">
   <h2>En Construcción - Subí tu foto de la obra</h2>
   <label class="campo">Obra <select id="obra-sel"></select></label>
@@ -77,7 +78,8 @@
 <dialog id="datos-modal" class="modal ancho">
   <div class="fila"><h2 style="margin:0">Datos del mapa</h2><button id="datos-x" class="cerrar" aria-label="Cerrar">✕</button></div>
   <div id="datos-cuerpo"></div>
-</dialog>
+</dialog> -->
+
 <div id="toast" role="status"></div>
 <dialog id="visor"><img alt="Imagen ampliada"></dialog>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
