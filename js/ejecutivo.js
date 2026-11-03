@@ -89,7 +89,7 @@
 
     const totAv = m.n - m.sinAvance, topInv = m.industrias.slice().sort((a, b) => b.inv - a.inv);
     // A. Estado del portafolio
-    const A = seccion('estado', 'Portfolio status',
+    const A = seccion('estado', 'Estado de la obra',
       tira(m.niveles.map(v => ({ v: v.n, c: v.color }))) + m.niveles.map(v => fila(v.etiqueta, `<b>${v.n}</b> · ${pct(v.n, totAv)} %`, pct(v.n, totAv), v.color, '', false, ` <small>${v.rango}</small>`)).join('') +
       (m.sinAvance ? `<p class="ex-nota">${m.sinAvance} sin avance verificado (no se incluye en estos grupos).</p>` : ''));
     // B. Top industrias
