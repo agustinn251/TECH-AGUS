@@ -29,10 +29,22 @@
     alerta: '<path d="M12 4l9 16H3z"/><path d="M12 10v4M12 17v.01"/>',
     ok: '<circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/>',
     dato: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.01"/>',
+    persona: '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/>',
     panel: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M14 4v16"/>'
   };
   const svg = k => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${IC[k]}</svg>`;
   const colorDe = t => (typeof COLORES !== 'undefined' && COLORES[t]) || GRIS;
+
+  // Países con responsable cargado (filas "pais-..." de la planilla), ordenados por nombre.
+  // Se usa el nombre de país tal como aparece en las obras, para que el filtro encuentre coincidencias.
+  function paisesConResponsable() {
+    const map = (typeof RESPONSABLES_PAIS !== 'undefined' && RESPONSABLES_PAIS) ? RESPONSABLES_PAIS : {};
+    const cl = q => (typeof clavePais === 'function' ? clavePais(q) : String(q || '').toLowerCase());
+    return Object.values(map).filter(p => p && (p.responsable || p.foto)).map(p => {
+      const o = OBRAS.find(x => cl(x.pais) === cl(p.nombre));
+      return { ...p, pais: o ? o.pais : p.nombre };
+    }).sort((a, b) => String(a.pais).localeCompare(String(b.pais), 'es'));
+  }
 
   // ---------- Métricas derivadas (todo se calcula sobre los proyectos visibles) ----------
   function metricas(vis) {
@@ -122,9 +134,18 @@
     if (m.pond != null) ins.push(['dato', `Avance ponderado por inversión: ${fmt(m.pond)} %.`]);
     const G = seccion('resumen', 'Resumen ejecutivo', `<p class="ex-resumen" id="ex-texto">${esc(resumen(m))}</p>
       <ul class="ex-ins">${ins.map(([i, t]) => `<li class="${i}">${svg(i)}<span>${t}</span></li>`).join('')}</ul><button class="ex-btn" id="ex-copiar">Copiar resumen</button>`);
+    // H. Responsables por país
+    const listaResp = paisesConResponsable();
+    const R = listaResp.length ? seccion('persona', 'Responsables', listaResp.map(p => {
+      const foto = (typeof fotoPerfil === 'function' ? fotoPerfil(p.foto) : p.foto);
+      const ini = String(p.responsable || '?').trim().split(/\s+/).slice(0, 2).map(x => x[0]).join('').toUpperCase();
+      const ava = foto ? `<img src="${esc(foto)}" alt="${esc(p.responsable)}" loading="lazy">` : `<span class="ini">${esc(ini)}</span>`;
+      return `<button class="ex-resp" data-pais="${esc(p.pais)}" aria-pressed="${f.pais === p.pais}">${ava}`
+        + `<span><b>${esc(p.responsable || 'Sin asignar')}</b><small>${esc([p.cargo, p.pais].filter(Boolean).join(' · '))}</small></span></button>`;
+    }).join('') + `<button class="ex-btn" id="ex-equipo">Ver equipo completo</button>`) : '';
 
     const cuerpo = $('exec').querySelector('.ex-cuerpo'), y = cuerpo ? cuerpo.scrollTop : 0;
-    $('exec').innerHTML = cab + `<div class="ex-cuerpo">${G}${A}${E}${F}${B}${C}${D}</div><footer class="ex-pie">Cálculos sobre los proyectos visibles. Los montos provienen de fuentes públicas; los proyectos sin avance verificado se excluyen del promedio.</footer>`;
+    $('exec').innerHTML = cab + `<div class="ex-cuerpo">${R}${G}${A}${E}${F}${B}${C}${D}</div><footer class="ex-pie">Cálculos sobre los proyectos visibles. Los montos provienen de fuentes públicas; los proyectos sin avance verificado se excluyen del promedio.</footer>`;
     const nuevo = $('exec').querySelector('.ex-cuerpo'); if (nuevo) nuevo.scrollTop = y;
     requestAnimationFrame(() => $('exec').querySelectorAll('.eb i[data-w]').forEach(i => { i.style.width = i.dataset.w + '%'; }));
   }
@@ -134,8 +155,35 @@
 
   // ---------- Interacción ----------
   const aviso = txt => { const t = $('toast'); if (!t) return; t.textContent = txt; t.classList.add('on'); clearTimeout(aviso.t); aviso.t = setTimeout(() => t.classList.remove('on'), 2500); };
+
+  // Grilla completa de responsables (una tarjeta por país).
+  function abrirEquipo() {
+    const dlg = $('equipo'), grid = $('equipo-grid'), nota = $('equipo-nota');
+    if (!dlg || !grid) return;
+    const cl = p => (typeof clavePais === 'function' ? clavePais(p) : String(p || '').toLowerCase());
+    const lista = paisesConResponsable();
+    if (nota) nota.textContent = lista.length
+      ? `${lista.length} ${lista.length === 1 ? 'país' : 'países'} con responsable asignado.`
+      : 'Todavía no hay responsables cargados en la planilla.';
+    grid.innerHTML = lista.map(p => {
+      const obras = OBRAS.filter(o => cl(o.pais) === cl(p.pais));
+      const conAv = obras.filter(o => o.avance_pct != null);
+      const av = conAv.length ? Math.round(conAv.reduce((t, o) => t + o.avance_pct, 0) / conAv.length) : null;
+      const inv = obras.reduce((t, o) => t + (o.inversion_usd || 0), 0);
+      const stats = [[fmt(obras.length), 'obras'], [av == null ? 's/d' : av + ' %', 'avance'], [usdCorto(inv), 'inversión']];
+      return typeof tarjetaResp === 'function'
+        ? tarjetaResp({ rol: p.pais, nombre: p.responsable || 'Sin asignar', cargo: p.cargo, foto: p.foto, stats, variante: 'resp--card' })
+        : '';
+    }).join('');
+    dlg.showModal();
+  }
+
+  const btnEquipoX = $('equipo-x');
+  if (btnEquipoX && $('equipo')) btnEquipoX.onclick = () => $('equipo').close();
+
   $('exec').addEventListener('click', async e => {
     const t = e.target, ind = t.closest('[data-ind]'), pa = t.closest('[data-pais]'), id = t.closest('[data-id]');
+    if (t.closest('#ex-equipo')) return abrirEquipo();
     if (ind) { f.tipo = f.tipo === ind.dataset.ind ? null : ind.dataset.ind; return refrescar(); }
     if (pa) { f.pais = f.pais === pa.dataset.pais ? 'Todos' : pa.dataset.pais; return refrescar(); }
     if (id) return seleccionar(id.dataset.id);

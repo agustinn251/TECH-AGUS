@@ -59,8 +59,7 @@
 
     <span id="exec-toggle-label">Indicadores</span>
 </button>  
-<!-- <div class="cta-wrap"><button id="cta" class="cta"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>En Construcción</button></div>
-</dialog> -->
+<div class="cta-wrap"><button id="cta" class="cta"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>En Construcción</button></div>
 <!-- 
 Boton de subida de fotos de obras, solo visible para administradores:
 
@@ -82,6 +81,12 @@ Boton de subida de fotos de obras, solo visible para administradores:
 
 <div id="toast" role="status"></div>
 <dialog id="visor"><img alt="Imagen ampliada"></dialog>
+<!-- Equipo: grilla de responsables por país -->
+<dialog id="equipo" class="modal ancho" aria-label="Responsables por país">
+  <div class="fila"><h2 style="margin:0">Responsables</h2><button id="equipo-x" class="cerrar" aria-label="Cerrar">✕</button></div>
+  <p class="nota" id="equipo-nota" style="margin:8px 0 0"></p>
+  <div id="equipo-grid" class="equipo-grid"></div>
+</dialog>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="data/obras.js"></script>
 <script src="js/config.js"></script>

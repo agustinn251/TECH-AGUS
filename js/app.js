@@ -58,6 +58,37 @@ const PAISES = [...new Set([...PAISES_BASE, ...OBRAS.map(o => o.pais)])];
 const f = { pais: 'Todos', tipo: null, q: '' };
 const color = o => COLORES[o.tipo] || '#ccc';
 const usd = n => !n ? 's/d' : 'US$ ' + (n >= 1e9 ? (n / 1e9).toLocaleString('es-AR') + ' mil M' : (n / 1e6).toLocaleString('es-AR') + ' M');
+
+// ---- Tarjeta de responsable: la persona a cargo de una obra o de un país ----
+const escH = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const iniciales = n => String(n || '').trim().split(/\s+/).filter(Boolean).slice(0, 2).map(p => p[0]).join('').toUpperCase() || '?';
+const fotoUrl = u => (typeof fotoPerfil === 'function' ? fotoPerfil(u) : u) || '';
+const clave = p => (typeof clavePais === 'function' ? clavePais(p) : String(p ?? '').toLowerCase());
+const responsablePais = p => (typeof RESPONSABLES_PAIS !== 'undefined' && RESPONSABLES_PAIS[clave(p)]) || null;
+
+function tarjetaResp({ rol, nombre, cargo, foto, stats = [], variante = '' }) {
+  const f = fotoUrl(foto);
+  const img = f ? `<img src="${escH(f)}" alt="${escH(nombre)}" loading="lazy" onerror="this.parentNode.classList.add('sin-foto');this.remove()">` : '';
+  const st = stats.filter(Boolean).filter(([v]) => v !== null && v !== undefined && v !== '')
+    .map(([v, l]) => `<div><b>${v}</b><span>${escH(l)}</span></div>`).join('');
+  return `<div class="resp${variante ? ' ' + variante : ''}">`
+    + `<div class="resp-ava${f ? '' : ' sin-foto'}" data-ini="${escH(iniciales(nombre))}">${img}</div>`
+    + `<div class="resp-txt"><p class="resp-rol">${escH(rol)}</p><b class="resp-nom">${escH(nombre)}</b>`
+    + (cargo ? `<span class="resp-cargo">${escH(cargo)}</span>` : '') + `</div>`
+    + (st ? `<div class="resp-stats">${st}</div>` : '') + `</div>`;
+}
+
+// Responsable de la obra; si no hay, cae al responsable del país.
+function bloqueResponsable(o) {
+  const propio = o.responsable && (o.responsable.nombre || o.responsable.foto)
+    ? { rol: 'Responsable de obra', nombre: o.responsable.nombre, cargo: o.responsable.cargo, foto: o.responsable.foto } : null;
+  const p = responsablePais(o.pais);
+  const dePais = p && (p.responsable || p.foto)
+    ? { rol: 'Responsable del país', nombre: p.responsable, cargo: p.cargo, foto: p.foto } : null;
+  const r = propio || dePais;
+  if (!r) return '';
+  return tarjetaResp({ ...r, stats: [[o.avance_pct == null ? 's/d' : o.avance_pct + '%', 'avance'], [usd(o.inversion_usd), 'inversión']] });
+}
 const norm = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 const visibles = () => OBRAS.filter(o => (f.pais === 'Todos' || o.pais === f.pais) && (!f.tipo || o.tipo === f.tipo) &&
   (!f.q || norm([o.nombre, o.ubicacion, o.pais, o.tipo, o.descripcion, ...o.colaboradores].join(' ')).includes(norm(f.q))));
@@ -200,6 +231,7 @@ function seleccionar(id) {
     <p class="etiquetas"><span class="tipo">${o.tipo}</span> <span class="pais-tag">${o.pais}</span></p>
     <h2>${o.nombre}</h2>
     <p class="ubic">${o.ubicacion}</p>
+    ${bloqueResponsable(o)}
     <div class="kpis">
       <div class="kpi"><b>${usd(o.inversion_usd)}</b><span>Inversión</span></div>
       <div class="kpi"><b>${o.estado}</b><span>Estado</span></div>

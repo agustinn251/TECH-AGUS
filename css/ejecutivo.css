@@ -122,3 +122,57 @@
     letter-spacing: .05em;
   }
 }
+/* ==========================================================
+   TARJETA DE RESPONSABLE (obra / país) + grilla del equipo
+   ========================================================== */
+.resp{display:flex;flex-wrap:wrap;align-items:center;gap:14px;padding:14px 16px;margin:0 0 16px;border-radius:16px;
+  border:1px solid var(--line);background:linear-gradient(135deg,rgba(52,168,83,.13),rgba(255,255,255,.03) 62%);
+  box-shadow:0 10px 26px rgba(0,0,0,.25);pointer-events:auto;min-width:0}
+.resp-ava{position:relative;flex:none;width:64px;height:64px;border-radius:50%;padding:3px;
+  background:linear-gradient(140deg,#34A853,#1c6b36)}
+.resp-ava img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;background:#0d1420}
+.resp-ava.sin-foto::after{content:attr(data-ini);position:absolute;inset:3px;border-radius:50%;
+  display:grid;place-items:center;background:#101a26;color:#8fe3a7;font:800 19px Inter,sans-serif}
+.resp-txt{min-width:0;flex:1 1 110px;display:flex;flex-direction:column;gap:2px}
+.resp-rol{margin:0;font:700 9.5px 'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--verde)}
+.resp-nom{font-size:17px;line-height:1.2;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.resp-cargo{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.resp-stats{margin-left:auto;display:flex;gap:18px;flex:none}
+.resp-stats div{display:flex;flex-direction:column;gap:1px;text-align:right}
+.resp-stats b{font:700 14px 'JetBrains Mono',monospace}
+.resp-stats span{font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+
+/* Variante tarjeta (grilla del equipo) */
+.resp--card{flex-direction:column;text-align:center;gap:10px;padding:20px 14px 18px;margin:0}
+.resp--card .resp-ava{width:88px;height:88px}
+.resp--card .resp-ava.sin-foto::after{font-size:26px}
+.resp--card .resp-txt{align-items:center;width:100%}
+.resp--card .resp-nom{font-size:18px}
+.resp--card .resp-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:100%;margin:2px 0 0;gap:8px}
+.resp--card .resp-stats div{text-align:center;min-width:0}
+.resp--card .resp-stats b{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.resp--card .resp-stats span{font-size:8.5px;letter-spacing:.05em}
+
+/* Filas del panel ejecutivo */
+.ex-resp{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:8px;margin:0 0 6px;
+  border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);
+  font:inherit;cursor:pointer;transition:border-color .15s}
+.ex-resp:hover{border-color:#34A853}
+.ex-resp img,.ex-resp .ini{width:36px;height:36px;border-radius:50%;flex:none;object-fit:cover;
+  display:grid;place-items:center;background:#101a26;color:#8fe3a7;font:800 13px Inter,sans-serif}
+.ex-resp span{display:flex;flex-direction:column;min-width:0}
+.ex-resp b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ex-resp small{color:var(--muted);font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* Modal del equipo */
+.modal.ancho{width:min(980px,94vw);max-height:86vh;overflow:auto}
+.equipo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:14px}
+
+@media (max-width:820px){
+  .resp{padding:12px;gap:11px}
+  .resp-ava{width:54px;height:54px}
+  .resp-nom{font-size:15.5px}
+  .resp-stats{gap:12px}
+  .resp-stats b{font-size:12.5px}
+  .equipo-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+}

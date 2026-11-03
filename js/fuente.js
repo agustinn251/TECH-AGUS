@@ -10,7 +10,10 @@
     inversion_nota: ['inversionnota', 'notainversion'], estado: ['estado', 'estadoobra'], estado_csv: ['estadolistado', 'estadocsv', 'estadogestion'],
     prioridad: ['prioridad'], inicio: ['inicio', 'fechainicio', 'anioinicio'], fin: ['fin', 'fechafin', 'aniofin'], avance: ['avancepct', 'avance'],
     descripcion: ['descripcion', 'resumen'], colaboradores: ['colaboradores'], hitos: ['hitos'], datos: ['datos', 'datosclave'],
-    fuentes: ['fuentes', 'fuente'], fotos: ['fotos', 'imagenes'], ruta: ['ruta', 'trazado'], sin_suma: ['sinsuma']
+    fuentes: ['fuentes', 'fuente'], fotos: ['fotos', 'imagenes'], ruta: ['ruta', 'trazado'], sin_suma: ['sinsuma'],
+    responsable: ['responsable', 'responsableobra', 'responsabledeobra', 'responsabledelproyecto', 'encargado'],
+    cargo: ['cargo', 'puesto', 'rol', 'posicion'],
+    foto_responsable: ['fotoresponsable', 'fotodelresponsable', 'fotoresponsableobra', 'fotopersona']
   };
   // Varios valores en una celda: uno por línea (Alt+Enter en Excel) o separados por ";" si no hay saltos de línea.
   const lista = v => Array.isArray(v) ? v : (t => (t.includes('\n') ? t.split(/\r?\n/) : t.split(';')).map(x => x.trim()).filter(Boolean))(String(v ?? ''));
@@ -29,6 +32,16 @@
     const m = {}; Object.keys(fila).forEach(k => m[K(k)] = fila[k]);
     const g = c => { for (const s of SIN[c]) if (m[s] !== undefined && m[s] !== null && m[s] !== '') return m[s]; return undefined; };
     const nombre = String(g('nombre') ?? '').trim(); if (!nombre) return { omitida: 'fila sin nombre' };
+    // Fila de país: se marca con un ID tipo "pais-argentina" y no lleva coordenadas.
+    // Sirve solo para la tarjeta del responsable del país, nunca se dibuja en el mapa.
+    if (/^pais[\s_-]/i.test(String(g('id') ?? '').trim())) {
+      return { pais: {
+        nombre: String(g('pais') ?? nombre).trim() || nombre,
+        responsable: String(g('responsable') ?? '').trim(),
+        cargo: String(g('cargo') ?? '').trim(),
+        foto: String(g('foto_responsable') ?? '').trim()
+      } };
+    }
     let lat = num(g('lat')), lng = num(g('lng')); const co = g('coordenadas');
     if ((lat == null || lng == null) && Array.isArray(co)) { lat = num(co[0]); lng = num(co[1]); }
     if (lat == null || lng == null || Math.abs(lat) > 90 || Math.abs(lng) > 180) return { omitida: `${nombre}: faltan o son inválidas la latitud y la longitud` };
@@ -46,19 +59,26 @@
     const hitos = lista(g('hitos')).map(h => typeof h === 'object' ? h : (([f, t]) => ({ fecha: t ? f : '', texto: t || f }))(partir(h)));
     const datos = lista(g('datos')).map(d => typeof d === 'object' ? d : (([v, e]) => ({ valor: v, etiqueta: e }))(partir(d)));
     const fuentes = lista(g('fuentes')).map(x => { if (typeof x === 'object') return x; const [a, b] = partir(x); return b ? { texto: a, url: b } : { texto: a.replace(/^https?:\/\/(www\.)?/, '').split('/')[0], url: a }; });
+    // Persona a cargo de esta obra (independiente de "Fotos", que son las imágenes de la obra).
+    const resp = { nombre: String(g('responsable') ?? '').trim(), cargo: String(g('cargo') ?? '').trim(), foto: String(g('foto_responsable') ?? '').trim() };
     return { obra: {
       id: String(g('id') ?? (sigla !== '—' ? slug(sigla) : slug(nombre))), sigla, nombre, pais: String(g('pais') ?? '—').trim(), cliente: String(g('cliente') ?? '—').trim(),
       mercado, tipo: mercado, inicio: String(g('inicio') ?? '—'), fin: String(g('fin') ?? '—'), estado_csv: ec, prioridad: cap(String(g('prioridad') ?? 'Sin definir').trim()) || 'Sin definir',
       ubicacion: String(g('ubicacion') ?? '').trim(), coordenadas: [lat, lng], ...(ruta.length > 1 ? { ruta } : {}),
       inversion_usd: inv, inversion_nota: String(g('inversion_nota') ?? (inv ? 'Monto informado en la planilla.' : 'Sin dato de inversión verificado.')),
       avance_pct: av, estado: est, descripcion: desc, datos, colaboradores: lista(g('colaboradores')), hitos, fotos: lista(g('fotos')), fuentes,
+      responsable: resp,
       ...(desc ? {} : { basica: true }), ...(/^(si|sí|1|true|x|yes)$/i.test(String(g('sin_suma') ?? '').trim()) ? { sin_suma: true } : {})
     } };
   }
   function normalizarTodo(filas) {
-    const obras = [], omitidas = [], ids = new Set();
-    filas.forEach(f => { const r = normalizar(f); if (r.obra) { let id = r.obra.id, n = 2; while (ids.has(id)) id = r.obra.id + '-' + n++; ids.add(id); obras.push({ ...r.obra, id }); } else omitidas.push(r.omitida); });
-    return { obras, omitidas };
+    const obras = [], omitidas = [], ids = new Set(), paises = {};
+    filas.forEach(f => {
+      const r = normalizar(f);
+      if (r.pais) { if (r.pais.nombre) paises[K(r.pais.nombre)] = r.pais; return; }
+      if (r.obra) { let id = r.obra.id, n = 2; while (ids.has(id)) id = r.obra.id + '-' + n++; ids.add(id); obras.push({ ...r.obra, id }); } else omitidas.push(r.omitida);
+    });
+    return { obras, omitidas, paises };
   }
   const aFilas = o => ({ ID: o.id, Nombre: o.nombre, Tipo: o.tipo, Pais: o.pais, Ubicacion: o.ubicacion,
     Latitud: o.coordenadas[0], Longitud: o.coordenadas[1], InversionUSD: o.inversion_usd ?? '', InversionNota: o.inversion_nota ?? '', Estado: o.estado,
@@ -128,18 +148,34 @@
       else if (cfg.modo === 'sharepoint') { filas = await leerSharePoint(cfg.sharepoint); origen = 'SharePoint · lista ' + cfg.sharepoint.lista; }
     } catch (e) { root.ERROR_FUENTE = e.message; filas = null; }
     if (!filas) { const g = leerGuardado(); if (g) { filas = g.filas; origen = 'Importado: ' + g.nombre; } }
-    let omitidas = [];
-    if (filas) { const r = normalizarTodo(filas); omitidas = r.omitidas;
+    let omitidas = [], paises = {};
+    if (filas) { const r = normalizarTodo(filas); omitidas = r.omitidas; paises = r.paises;
       if (r.obras.length) OBRAS.splice(0, OBRAS.length, ...r.obras); else { root.ERROR_FUENTE = root.ERROR_FUENTE || 'No encontré proyectos válidos en los datos.'; origen = 'data/obras.js (local)'; } }
+    root.RESPONSABLES_PAIS = paises;
     let i = 0; OBRAS.forEach(o => { if (!COLORES[o.mercado]) COLORES[o.mercado] = PALETA[i++ % PALETA.length]; });
     root.ORIGEN_DATOS = { origen, n: OBRAS.length, omitidas };
   }
+  // Link de foto → URL que un <img> puede mostrar. Convierte los enlaces de Google Drive
+  // (que apuntan a una página, no a la imagen) al formato de miniatura pública.
+  function fotoPerfil(u) {
+    const s = String(u ?? '').trim();
+    if (!s) return '';
+    if (/^data:image\//i.test(s)) return s;
+    if (/drive\.google\.com|docs\.google\.com/.test(s)) {
+      const m = s.match(/\/d\/([\w-]{10,})/) || s.match(/[?&]id=([\w-]{10,})/);
+      if (m) return `https://drive.google.com/thumbnail?id=${m[1]}&sz=w600`;
+    }
+    return s;
+  }
+  const clavePais = K;
   // ---- descargas ----
   const bajar = (blob, nombre) => { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = nombre; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000); };
   async function descargarXLSX() { const X = await sheetjs(), wb = X.utils.book_new(); X.utils.book_append_sheet(wb, X.utils.json_to_sheet(OBRAS.map(aFilas)), 'Proyectos'); X.writeFile(wb, 'Proyectos.xlsx'); }
   function descargarCSV() { const f = OBRAS.map(aFilas), cab = Object.keys(f[0]), c = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
     bajar(new Blob(['\uFEFF' + [cab.map(c).join(';'), ...f.map(r => cab.map(k => c(r[k])).join(';'))].join('\r\n')], { type: 'text/csv;charset=utf-8' }), 'Proyectos.csv'); }
 
-  root.DATOS = { normalizar, normalizarTodo, aFilas, parseCSV, leerArchivo, guardar, restablecer, leerGuardado, descargarXLSX, descargarCSV };
+  root.DATOS = { normalizar, normalizarTodo, aFilas, parseCSV, leerArchivo, guardar, restablecer, leerGuardado, descargarXLSX, descargarCSV, fotoPerfil, clavePais };
   root.cargarObras = cargar;
+  root.fotoPerfil = fotoPerfil;
+  root.clavePais = clavePais;
 })();
