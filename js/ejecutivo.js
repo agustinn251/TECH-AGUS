@@ -82,14 +82,14 @@
     return `<svg class="ex-ring" viewBox="0 0 64 64" aria-hidden="true"><g transform="rotate(-90 32 32)"><circle class="p" cx="32" cy="32" r="26"/><circle class="v" cx="32" cy="32" r="26" style="stroke:${c}" stroke-dasharray="${(C * p / 100).toFixed(1)} ${C.toFixed(1)}"/></g><text x="32" y="37" text-anchor="middle">${fmt(p)}%</text></svg>`; };
 
   function pintarPanel(m) {
-    const cab = `<header class="ex-cab"><div><p class="ex-sup">Executive portfolio</p><h2>Panel ejecutivo</h2>
+    const cab = `<header class="ex-cab"><div><p class="ex-sup">Portafolio Ejecutivo</p><h2>Panel ejecutivo</h2>
       <p class="ex-sub">${fmt(m.n)} ${m.n === 1 ? 'proyecto' : 'proyectos'}${filtrado() ? ' · <span class="ex-chip">Vista filtrada</span> <button class="ex-lnk" id="ex-limpiar">Limpiar</button>' : ' · portafolio completo'}</p></div>
       <button class="ex-x" id="exec-cerrar" aria-label="Ocultar el panel ejecutivo">✕</button></header>`;
     if (!m.n) { $('exec').innerHTML = cab + '<div class="ex-cuerpo"><p class="ex-vacio">No hay proyectos con los filtros actuales.</p></div>'; return; }
 
     const totAv = m.n - m.sinAvance, topInv = m.industrias.slice().sort((a, b) => b.inv - a.inv);
     // A. Estado del portafolio
-    const A = seccion('estado', 'Portfolio status',
+    const A = seccion('estado', 'Estado del portafolio',
       tira(m.niveles.map(v => ({ v: v.n, c: v.color }))) + m.niveles.map(v => fila(v.etiqueta, `<b>${v.n}</b> · ${pct(v.n, totAv)} %`, pct(v.n, totAv), v.color, '', false, ` <small>${v.rango}</small>`)).join('') +
       (m.sinAvance ? `<p class="ex-nota">${m.sinAvance} sin avance verificado (no se incluye en estos grupos).</p>` : ''));
     // B. Top industrias
@@ -120,7 +120,7 @@
     if (m.niveles[2].n) ins.push(['alerta', `${m.niveles[2].n} ${m.niveles[2].n === 1 ? 'proyecto está' : 'proyectos están'} en etapa inicial (< 25 %): requieren seguimiento.`]);
     if (m.niveles[0].n) ins.push(['ok', `${m.niveles[0].n} ${m.niveles[0].n === 1 ? 'proyecto supera' : 'proyectos superan'} el 75 % de avance.`]);
     if (m.pond != null) ins.push(['dato', `Avance ponderado por inversión: ${fmt(m.pond)} %.`]);
-    const G = seccion('resumen', 'Executive summary', `<p class="ex-resumen" id="ex-texto">${esc(resumen(m))}</p>
+    const G = seccion('resumen', 'Resumen ejecutivo', `<p class="ex-resumen" id="ex-texto">${esc(resumen(m))}</p>
       <ul class="ex-ins">${ins.map(([i, t]) => `<li class="${i}">${svg(i)}<span>${t}</span></li>`).join('')}</ul><button class="ex-btn" id="ex-copiar">Copiar resumen</button>`);
 
     const cuerpo = $('exec').querySelector('.ex-cuerpo'), y = cuerpo ? cuerpo.scrollTop : 0;
