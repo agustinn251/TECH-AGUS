@@ -27,7 +27,26 @@ L.control.layers({ 'Oscuro': oscuro, 'Satélite': satelite, 'Calles': esri('Worl
 const ajustarZoom = () => { const c = map.getContainer().classList; c.toggle('zoom-alto', map.getZoom() > 7); c.toggle('zoom-bajo', map.getZoom() < 5); };
 map.on('zoomend', ajustarZoom); ajustarZoom();
 
+
 const $detalle = $('detalle'), visor = $('visor');
+
+// ---- Panel desplegable del listado de obras en móviles ----
+const obrasToggle = $('obras-toggle');
+const obrasCerrar = $('obras-cerrar');
+
+function abrirListado() {
+  document.body.classList.add('lista-abierta');
+  obrasToggle.setAttribute('aria-expanded', 'true');
+}
+
+function cerrarListado() {
+  document.body.classList.remove('lista-abierta');
+  obrasToggle.setAttribute('aria-expanded', 'false');
+}
+
+obrasToggle.onclick = abrirListado;
+obrasCerrar.onclick = cerrarListado;
+
 
 // ---- Paises en la busqueda del panel izquierdo ----
 const PAISES_BASE = [
