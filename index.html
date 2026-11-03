@@ -32,6 +32,23 @@
 </main>
 <button id="datos-btn" class="icono-datos" aria-label="Datos del mapa: importar o exportar" title="Datos"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg></button>
 <div id="stats" class="stats card" aria-label="Resumen"></div>
+<!-- Panel ejecutivo -->
+<aside id="exec" class="exec card"
+       aria-label="Panel ejecutivo" hidden></aside>
+
+<!-- Botón para abrir indicadores en tablet y móvil -->
+<button id="exec-toggle" class="exec-toggle"
+        type="button"
+        aria-controls="exec"
+        aria-expanded="false">
+
+    <svg class="ic" viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="3" y="4" width="18" height="16" rx="2"/>
+        <path d="M14 4v16"/>
+    </svg>
+
+    Indicadores
+</button>  
 <div class="cta-wrap"><button id="cta" class="cta"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>En Construcción</button></div>
 <dialog id="subida" class="modal">
   <h2>En Construcción - Subí tu foto de la obra</h2>
