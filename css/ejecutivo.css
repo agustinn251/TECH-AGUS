@@ -189,3 +189,19 @@
 
 /* El detalle de una obra no usa .lista-contenedor: necesita su propio scroll */
 body.lista-abierta #detalle.detalle-obra{display:block !important;overflow-y:auto !important;height:100%}
+
+/* ---- Scroll visible (verde) en el listado y en el detalle ---- */
+.lista-contenedor,
+#detalle.detalle-obra{flex:1 1 auto;min-height:0;overflow-y:auto;
+  scrollbar-width:thin;scrollbar-color:#34A853 rgba(255,255,255,.07)}
+.lista-contenedor::-webkit-scrollbar,
+#detalle.detalle-obra::-webkit-scrollbar,
+#detalle::-webkit-scrollbar{width:8px}
+.lista-contenedor::-webkit-scrollbar-track,
+#detalle.detalle-obra::-webkit-scrollbar-track,
+#detalle::-webkit-scrollbar-track{background:rgba(255,255,255,.07);border-radius:999px}
+.lista-contenedor::-webkit-scrollbar-thumb,
+#detalle.detalle-obra::-webkit-scrollbar-thumb,
+#detalle::-webkit-scrollbar-thumb{background:#34A853;border-radius:999px;min-height:40px}
+.lista-contenedor::-webkit-scrollbar-thumb:hover,
+#detalle.detalle-obra::-webkit-scrollbar-thumb:hover{background:#3fc463}
