@@ -276,3 +276,29 @@ body.lista-abierta #detalle.detalle-obra{display:block !important;overflow-y:aut
   header.card:not(.filtros-abiertos) #buscar,
   header.card:not(.filtros-abiertos) #tipos{display:none}
 }
+
+/* ==========================================================
+   MOBILE: el botón "Obras" con el mismo estilo que la barra
+   de "Portafolio Ejecutivo"
+   ========================================================== */
+@media (max-width:820px){
+  .obras-controls{width:100% !important}
+  .obras-toggle{
+    display:flex !important;
+    width:100% !important;
+    height:46px !important;
+    min-height:46px !important;
+    padding:10px 16px !important;
+    justify-content:center !important;
+    gap:10px !important;
+    font:600 14px Inter,sans-serif !important;
+    border-radius:12px !important;
+    border:1px solid var(--line) !important;
+    background:var(--glass) !important;
+    box-shadow:0 8px 22px rgba(0,0,0,.5) !important;
+  }
+  .obras-toggle > span:first-child{
+    font-size:18px !important;
+    line-height:1 !important;
+  }
+}
