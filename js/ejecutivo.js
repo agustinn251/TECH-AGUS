@@ -201,7 +201,7 @@
     if (t.closest('#exec-cerrar')) { abierto = false; aplicar(); }
   });
 
-  // Desktop: visible siempre. Tablet y móvil: se abre y se cierra con el botón "Indicadores".
+  // Desktop: visible siempre. Tablet y móvil: se abre y se cierra con el botón "Portafolio Ejecutivo".
   const mq = matchMedia('(min-width: 1200px)'); let abierto = mq.matches;
   function aplicar() {
     document.body.classList.toggle('exec-abierto', abierto); $('exec').hidden = !abierto;
@@ -210,9 +210,9 @@
     // Al cerrar con la X, el botón vuelve a aparecer para poder abrirlo.
     b.hidden = mq.matches && abierto;
     b.setAttribute('aria-expanded', String(abierto));
-    b.setAttribute('aria-label', abierto ? 'Cerrar indicadores' : 'Abrir indicadores');
+    b.setAttribute('aria-label', abierto ? 'Cerrar portafolio ejecutivo' : 'Abrir portafolio ejecutivo');
     const etiqueta = $('exec-toggle-label');
-    if (etiqueta) etiqueta.textContent = abierto ? 'Cerrar indicadores' : 'Indicadores';
+    if (etiqueta) etiqueta.textContent = abierto ? 'Cerrar portafolio' : 'Portafolio Ejecutivo';
     if (typeof actual !== 'undefined' && !actual && typeof ajustarMapa === 'function') ajustarMapa();
   }
   mq.addEventListener('change', () => { abierto = mq.matches; aplicar(); });
