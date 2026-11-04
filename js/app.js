@@ -303,7 +303,7 @@ function seleccionar(id) {
   $detalle.classList.add('detalle-obra');
   $detalle.innerHTML = `
     <div class="fila"><button class="cerrar" id="volver">← Todas las obras</button>
-      <span class="nav"><button class="cerrar" id="prev" aria-label="Obra anterior">‹</button><button class="cerrar" id="next" aria-label="Obra siguiente">›</button></span></div>
+      <span class="nav"><button class="cerrar" id="prev" aria-label="Obra anterior">‹</button><button class="cerrar" id="next" aria-label="Obra siguiente">›</button><button class="cerrar cerrar-panel" id="cerrar-detalle" aria-label="Cerrar">✕</button></span></div>
     <p class="etiquetas"><span class="tipo">${o.tipo}</span> <span class="pais-tag">${o.pais}</span></p>
     <h2>${o.nombre}</h2>
     <p class="ubic">${o.ubicacion}</p>
@@ -346,6 +346,7 @@ $detalle.addEventListener('click', async e => {
   const t = e.target, card = t.closest('.obra');
   if (card) return seleccionar(card.dataset.id);
   if (t.closest('#volver')) { mostrarLista(); return ajustarMapa(); }
+  if (t.closest('#cerrar-detalle')) { cerrarListado(); return; }
   if (t.closest('#prev') || t.closest('#next')) {
     const v = visibles(), i = v.findIndex(o => o.id === actual), d = t.closest('#next') ? 1 : -1;
     return seleccionar(v[(i + d + v.length) % v.length].id);
