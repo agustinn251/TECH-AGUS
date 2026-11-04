@@ -177,15 +177,14 @@
   .equipo-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
 }
 
-/* ---- Avatar del responsable en el listado de obras ---- */
-.obra.con-resp{grid-template-columns:auto 1fr auto 34px}
-.obra.con-resp small{grid-column:2/5}
-.obra.con-resp .mini{grid-column:1/-1}
-.obra-ava{grid-column:4;grid-row:1/3;align-self:center;justify-self:end;width:30px;height:30px;border-radius:50%;
-  overflow:hidden;display:block;background:#101a26;border:1px solid var(--line);position:relative;flex:none}
-.obra-ava img{width:100%;height:100%;object-fit:cover;display:block}
-.obra-ava.sin-foto::after{content:attr(data-ini);position:absolute;inset:0;display:grid;place-items:center;
-  color:#8fe3a7;font:800 10.5px Inter,sans-serif;letter-spacing:.02em}
+/* ---- Miniatura de la obra en el listado (columna "Fotos") ---- */
+.obra.con-foto{grid-template-columns:auto 1fr auto 44px}
+.obra.con-foto small{grid-column:2/5}
+.obra.con-foto .mini{grid-column:1/-1}
+.obra-foto{grid-column:4;grid-row:1/3;align-self:center;justify-self:end;width:44px;height:44px;border-radius:11px;
+  overflow:hidden;display:block;background:#101a26;border:1px solid var(--line);flex:none;
+  box-shadow:0 4px 12px rgba(0,0,0,.35)}
+.obra-foto img{width:100%;height:100%;object-fit:cover;display:block}
 
 /* El detalle de una obra no usa .lista-contenedor: necesita su propio scroll */
 body.lista-abierta #detalle.detalle-obra{display:block !important;overflow-y:auto !important;height:100%}

@@ -95,12 +95,11 @@ function bloqueResponsable(o) {
   return tarjetaResp({ ...r, variante: 'resp--destacada' });
 }
 
-// Avatar chico para el listado de obras.
-function avatarMini(r) {
-  if (!r) return '';
-  const f = fotoUrl(r.foto);
-  const img = f ? `<img src="${escH(f)}" alt="" loading="lazy" onerror="this.parentNode.classList.add('sin-foto');this.remove()">` : '';
-  return `<span class="obra-ava${f ? '' : ' sin-foto'}" data-ini="${escH(iniciales(r.nombre))}" title="${escH([r.nombre, r.cargo].filter(Boolean).join(' · '))}">${img}</span>`;
+// Miniatura de la obra para el listado: usa la primera foto de la columna "Fotos".
+function fotoMini(o) {
+  const foto = (o.fotos || []).find(Boolean);
+  if (!foto) return '';
+  return `<span class="obra-foto"><img src="${escH(fotoUrl(foto))}" alt="" loading="lazy" onerror="this.parentNode.style.display='none'"></span>`;
 }
 const norm = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 const visibles = () => OBRAS.filter(o => (f.pais === 'Todos' || o.pais === f.pais) && (!f.tipo || o.tipo === f.tipo) &&
@@ -188,10 +187,10 @@ if ($('tipos')) $('tipos').onclick = e => { const b = e.target.closest('[data-ti
 if ($('buscar')) $('buscar').oninput = e => { f.q = e.target.value.trim(); mostrarLista(); dibujar(); ajustarMapa(); };
 
 const tarjeta = o => {
-  const r = datosResponsable(o);
-  return `<button class="obra${r ? ' con-resp' : ''}" data-id="${o.id}" style="--c:${color(o)}"><span class="dot"></span><b>${o.nombre}</b>
+  const mini = fotoMini(o);
+  return `<button class="obra${mini ? ' con-foto' : ''}" data-id="${o.id}" style="--c:${color(o)}"><span class="dot"></span><b>${o.nombre}</b>
   <span class="monto">${usd(o.inversion_usd)}</span><small>${o.pais} · ${o.tipo} · ${o.estado}</small>
-  ${o.avance_pct == null ? '' : `<i class="mini"><u style="width:${o.avance_pct}%"></u></i>`}${avatarMini(r)}</button>`;
+  ${o.avance_pct == null ? '' : `<i class="mini"><u style="width:${o.avance_pct}%"></u></i>`}${mini}</button>`;
 };
 function mostrarLista() {
   actual = null;
