@@ -1,11 +1,17 @@
 const $ = id => document.getElementById(id);
 const movil = innerWidth <= 820;
-const zoomMinimo = Math.max(2, Math.ceil(Math.log2(Math.max(256, innerHeight) / 256)));
-const map = L.map('map', { zoomControl: false, minZoom: zoomMinimo }).setView([-30, -68], 4);
+// Zoom mínimo tal que el mundo siempre cubra la ventana (evita ver el gris de los bordes).
+const minZoomPara = (w, h) => Math.max(2, Math.ceil(Math.log2(Math.max(256, Math.max(w, h)) / 256)));
+const map = L.map('map', {
+  zoomControl: false,
+  minZoom: minZoomPara(innerWidth, innerHeight),
+  // No se puede arrastrar fuera del mundo.
+  maxBounds: [[-85, -179], [85, 179]],
+  maxBoundsViscosity: 1.0
+}).setView([-30, -68], 4);
 window.addEventListener('resize', () => {
   map.invalidateSize();
-  const nuevoMinimo = Math.max(2, Math.ceil(Math.log2(Math.max(256, map.getSize().y) / 256)));
-  map.setMinZoom(nuevoMinimo);
+  map.setMinZoom(minZoomPara(map.getSize().x, map.getSize().y));
 });
 L.control.zoom({ position: 'bottomright' }).addTo(map);
 
@@ -104,9 +110,20 @@ function fotoMini(o) {
 const norm = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 const visibles = () => OBRAS.filter(o => (f.pais === 'Todos' || o.pais === f.pais) && (!f.tipo || o.tipo === f.tipo) &&
   (!f.q || norm([o.nombre, o.ubicacion, o.pais, o.tipo, o.descripcion, ...o.colaboradores].join(' ')).includes(norm(f.q))));
-const margen = () => innerWidth > 820
-  ? { paddingTopLeft: [470, 90], paddingBottomRight: [30, 90] }
-  : { paddingTopLeft: [20, 70], paddingBottomRight: [20, innerHeight * 0.6] };
+// Área realmente visible del mapa: descuenta el encabezado arriba y la barra inferior.
+const margen = () => {
+  if (innerWidth > 820) return { paddingTopLeft: [470, 90], paddingBottomRight: [30, 90] };
+  const h = document.querySelector('#ui header.card');
+  let arriba = h ? h.getBoundingClientRect().bottom : 170;
+  const ctrl = document.querySelector('.obras-controls');
+  if (ctrl) { const r = ctrl.getBoundingClientRect(); if (r.height > 0) arriba = Math.max(arriba, r.bottom); }
+  const barra = document.getElementById('exec-toggle');
+  const abajo = (barra && !barra.hidden) ? (innerHeight - barra.getBoundingClientRect().top) : 80;
+  return {
+    paddingTopLeft: [20, Math.round(Math.max(60, arriba + 10))],
+    paddingBottomRight: [20, Math.round(Math.max(40, abajo + 10))]
+  };
+};
 let actual = null, urlsMapa = [], urlsGal = [];
 const capa = L.layerGroup().addTo(map);
 
@@ -197,20 +214,28 @@ if ($filtrosBtn && $headerCard) {
   $filtrosBtn.onclick = () => {
     const abierto = $headerCard.classList.toggle('filtros-abiertos');
     $filtrosBtn.setAttribute('aria-expanded', String(abierto));
+    // Al plegar, el mapa recupera espacio: reencuadramos.
+    if (!abierto) setTimeout(() => { map.invalidateSize(); ajustarMapa(); }, 60);
   };
 }
 
 // Mobile: anclar la barra inferior al alto VISIBLE real.
 // Al abrir la página el navegador reserva el alto de la barra de direcciones y los
 // elementos fixed con "bottom" quedan fuera de cuadro hasta que se hace scroll.
+let huecoBarra = -1;
 function anclarBarraInferior() {
   const vv = window.visualViewport;
   if (!vv) return;
   const hueco = Math.max(0, Math.min(240, Math.round(window.innerHeight - vv.height - vv.offsetTop)));
   document.documentElement.style.setProperty('--barra-abajo', (12 + hueco) + 'px');
+  // Si cambió el área visible, el mapa tiene que reacomodarse.
+  if (hueco !== huecoBarra) {
+    huecoBarra = hueco;
+    if (typeof map !== 'undefined') { map.invalidateSize(); ajustarMapa(); }
+  }
 }
 anclarBarraInferior();
-addEventListener('load', anclarBarraInferior);
+addEventListener('load', () => { anclarBarraInferior(); setTimeout(() => { map.invalidateSize(); ajustarMapa(); }, 120); });
 addEventListener('resize', anclarBarraInferior);
 addEventListener('orientationchange', () => setTimeout(anclarBarraInferior, 180));
 if (window.visualViewport) {
