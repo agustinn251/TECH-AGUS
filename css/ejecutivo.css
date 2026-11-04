@@ -66,7 +66,7 @@
   }
 
   /* Encabezado más compacto: sin el salto de línea que dejaba el texto oculto */
-  header.card br {
+  header.card .descripcion + br {
     display: none !important;
   }
 
@@ -78,15 +78,31 @@
     justify-content: center !important;
   }
 
-  /* El panel abierto ya trae su propia X: evitamos duplicar botones flotantes */
+  /* El panel abierto ya trae su propia X: evitamos duplicar botones flotantes.
+     Con el listado de obras abierto, el botón de Datos tapaba la última tarjeta. */
   body.exec-abierto .exec-toggle,
-  body.exec-abierto .icono-datos {
+  body.exec-abierto .icono-datos,
+  body.lista-abierta .icono-datos {
     display: none !important;
   }
 
   /* La atribución del mapa no queda debajo de la barra nueva */
   .leaflet-bottom.leaflet-right {
     margin-bottom: 66px !important;
+  }
+
+  /* El listado no se come toda la pantalla: deja ver el mapa abajo */
+  body.lista-abierta #detalle {
+    max-height: 55vh !important;
+    height: auto !important;
+    flex: none !important;
+  }
+
+  /* La cabecera del listado usa márgenes negativos de escritorio (22px);
+     en mobile el padding es 16px, así que la alineamos. */
+  body.lista-abierta #detalle .ex-cab {
+    margin: -16px -16px 12px -16px !important;
+    padding: 14px 46px 10px 16px !important;
   }
 }
 

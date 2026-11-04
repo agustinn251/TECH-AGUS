@@ -55,7 +55,8 @@ a{color:#ffa27a}
   #ui{left:10px;right:10px;top:10px;bottom:auto;width:auto}
   #detalle{max-height:60vh;padding:18px}
   h1{font-size:28px}
-  header p{display:none}
+  /* Solo el texto introductorio del encabezado; no los subtítulos de las tarjetas */
+  header.card > p{display:none}
 }
 /* imágenes */
 .zona{border:1px dashed rgba(255,255,255,.22);border-radius:14px;padding:14px;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
