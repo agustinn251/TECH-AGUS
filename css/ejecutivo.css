@@ -303,3 +303,13 @@ body.lista-abierta #detalle.detalle-obra{display:block !important;overflow-y:aut
     line-height:1 !important;
   }
 }
+
+/* ==========================================================
+   AVISO DE FALLA EN LA CARGA DE DATOS
+   ========================================================== */
+.aviso-datos{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 14px;border-radius:14px;
+  background:rgba(255,149,0,.12);border:1px solid rgba(255,149,0,.45);color:#ffd9b0;
+  font:500 13px Inter,sans-serif;pointer-events:auto;line-height:1.35}
+.aviso-datos b{color:#ffb454;font-weight:800;flex:none}
+.aviso-datos span{flex:1 1 160px;min-width:0}
+.aviso-datos .btn{padding:6px 12px;font-size:12.5px;flex:none}

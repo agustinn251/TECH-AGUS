@@ -386,3 +386,20 @@ pintarFiltros();
 const inicio = OBRAS.find(o => o.id === location.hash.slice(1));
 dibujar();
 if (inicio) seleccionar(inicio.id); else { mostrarLista(); ajustarMapa(); }
+
+// Aviso visible si la fuente de datos falló o si no quedó ninguna obra para mostrar.
+function mostrarAvisoDatos() {
+  const el = $('aviso-datos');
+  if (!el) return;
+  const err = window.ERROR_FUENTE;
+  const info = window.ORIGEN_DATOS || { n: OBRAS.length, origen: '', omitidas: [] };
+  if (!err && info.n > 0) { el.hidden = true; return; }
+  const detalle = err || 'La fuente no devolvió obras válidas.';
+  el.innerHTML = '<b>⚠ No se pudieron cargar los datos</b>'
+    + `<span>${escH(detalle)}${info.origen ? ' · ' + escH(info.origen) : ''}</span>`
+    + '<button class="btn" id="aviso-reintentar">Reintentar</button>';
+  el.hidden = false;
+  const b = $('aviso-reintentar');
+  if (b) b.onclick = () => location.reload();
+}
+mostrarAvisoDatos();

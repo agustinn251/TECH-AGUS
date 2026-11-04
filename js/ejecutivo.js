@@ -17,6 +17,7 @@
   const IC = {
     inversion: '<circle cx="12" cy="12" r="9"/><path d="M12 7v10M14.5 9.5c-.6-.8-1.5-1.2-2.5-1.2-1.4 0-2.5.8-2.5 1.9s1 1.7 2.5 2.1 2.5 1 2.5 2.1-1.1 1.9-2.5 1.9c-1.1 0-2-.4-2.6-1.2"/>',
     proyectos: '<path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/>',
+    encurso: '<path d="M3 21h18"/><path d="M6 21V9l6-4 6 4v12"/><path d="M10 21v-5h4v5"/>',
     paises: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>',
     avance: '<path d="M4 16a8 8 0 1 1 16 0"/><path d="M12 16l4-5"/>',
     fecha: '<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/>',
@@ -57,7 +58,10 @@
       return [...m.values()].sort((a, b) => b.n - a.n || b.inv - a.inv); };
     const mayor = conInv.slice().sort((a, b) => b.inversion_usd - a.inversion_usd)[0] || null;
     const adelantado = conAv.slice().sort((a, b) => b.avance_pct - a.avance_pct || (b.inversion_usd || 0) - (a.inversion_usd || 0))[0] || null;
-    return { vis, n, paises: new Set(vis.map(o => o.pais)).size, inversion, avance, pond, sinAvance: n - conAv.length,
+    // Obras "vivas": todo lo que no está finalizado, terminado u operativo.
+    const enCursoArr = vis.filter(o => !/^(finaliz|termin|operativ)/i.test(String(o.estado || '').trim()));
+    const enCurso = enCursoArr.length, invEnCurso = enCursoArr.reduce((t, o) => t + (o.inversion_usd || 0), 0);
+    return { vis, n, enCurso, invEnCurso, paises: new Set(vis.map(o => o.pais)).size, inversion, avance, pond, sinAvance: n - conAv.length,
       industrias: agrupar('tipo'), porPais: agrupar('pais'), niveles: NIVELES.map(v => ({ ...v, n: conAv.filter(o => v.ok(o.avance_pct)).length })),
       mayor, adelantado, empatados: adelantado ? conAv.filter(o => o.avance_pct === adelantado.avance_pct).length - 1 : 0 };
   }
@@ -76,6 +80,7 @@
     $('stats').innerHTML = [
       ['inversion', usdCorto(m.inversion), 'Inversión total', 'USD B = miles de millones de dólares'],
       ['proyectos', fmt(m.n), 'Proyectos', ''],
+      ['encurso', fmt(m.enCurso), 'En ejecución', `Obras no finalizadas. Inversión en ejecución: ${usdCorto(m.invEnCurso)}`],
       ['paises', fmt(m.paises), 'Países', ''],
       ['avance', m.avance == null ? 's/d' : `${fmt(m.avance)}%`, 'Avance promedio', m.pond != null ? `Ponderado por inversión: ${fmt(m.pond)} %` : 'Promedio simple de los proyectos con avance'],
       ['fecha', fecha, 'Última actualización', '']
