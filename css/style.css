@@ -289,23 +289,26 @@ body.lista-abierta #detalle h3 {
   }
 }
 
-/* 1. Asegurar que la columna contenedora izquierda ocupe todo el alto disponible */
-#ui {
-  position: absolute;
-  z-index: 1000;
-  left: 20px;
-  top: 20px;
-  bottom: 20px;
-  width: 420px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  pointer-events: none;
-}
+/* 1. La columna izquierda ocupa todo el alto (solo escritorio:
+   en mobile mandan left/right:10 y width:auto) */
+@media (min-width: 821px) {
+  #ui {
+    position: absolute;
+    z-index: 1000;
+    left: 20px;
+    top: 20px;
+    bottom: 20px;
+    width: 420px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    pointer-events: none;
+  }
 
-/* 2. Cuando el listado está abierto, hacemos que #detalle crezca para ocupar TODO el espacio sobrante */
-body.lista-abierta #ui {
-  bottom: 20px; /* Anclado al fondo */
+  /* Con el listado abierto, #detalle crece para ocupar el espacio sobrante */
+  body.lista-abierta #ui {
+    bottom: 20px;
+  }
 }
 
 body.lista-abierta #detalle {
