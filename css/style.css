@@ -326,3 +326,6 @@ body.lista-abierta #detalle .lista-contenedor {
   scrollbar-color: var(--verde, #34A853) transparent;
   padding-right: 4px;
 }
+
+/* Alto real del viewport en mobile: la barra de direcciones cambia el alto disponible */
+html, body { height: 100dvh; }

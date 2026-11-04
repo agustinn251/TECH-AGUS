@@ -200,6 +200,26 @@ if ($filtrosBtn && $headerCard) {
   };
 }
 
+// Mobile: anclar la barra inferior al alto VISIBLE real.
+// Al abrir la página el navegador reserva el alto de la barra de direcciones y los
+// elementos fixed con "bottom" quedan fuera de cuadro hasta que se hace scroll.
+function anclarBarraInferior() {
+  const vv = window.visualViewport;
+  if (!vv) return;
+  const hueco = Math.max(0, Math.min(240, Math.round(window.innerHeight - vv.height - vv.offsetTop)));
+  document.documentElement.style.setProperty('--barra-abajo', (12 + hueco) + 'px');
+}
+anclarBarraInferior();
+addEventListener('load', anclarBarraInferior);
+addEventListener('resize', anclarBarraInferior);
+addEventListener('orientationchange', () => setTimeout(anclarBarraInferior, 180));
+if (window.visualViewport) {
+  visualViewport.addEventListener('resize', anclarBarraInferior);
+  visualViewport.addEventListener('scroll', anclarBarraInferior);
+}
+setTimeout(anclarBarraInferior, 80);
+setTimeout(anclarBarraInferior, 400);
+
 const tarjeta = o => {
   const mini = fotoMini(o);
   return `<button class="obra${mini ? ' con-foto' : ''}" data-id="${o.id}" style="--c:${color(o)}"><span class="dot"></span><b>${o.nombre}</b>

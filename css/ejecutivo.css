@@ -36,12 +36,13 @@
     visibility: hidden !important;
   }
 
-  /* 3. Portafolio Ejecutivo: barra fija abajo, no tapa el encabezado */
+  /* 3. Portafolio Ejecutivo: barra fija abajo, no tapa el encabezado.
+     --barra-abajo lo recalcula el JS con visualViewport (la barra de direcciones cambia el alto). */
   .exec-toggle {
     position: fixed !important;
     left: 10px !important;
     right: 10px !important;
-    bottom: 12px !important;
+    bottom: var(--barra-abajo, 12px) !important;
     top: auto !important;
     height: 46px !important;
     padding: 10px 16px !important;
@@ -55,7 +56,7 @@
   .icono-datos {
     position: fixed !important;
     right: 12px !important;
-    bottom: 68px !important;
+    bottom: calc(var(--barra-abajo, 12px) + 56px) !important;
     top: auto !important;
     width: 44px !important;
     height: 44px !important;
