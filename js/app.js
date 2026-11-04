@@ -180,11 +180,25 @@ function pintarFiltros() {
     $tipos.innerHTML = Object.keys(COLORES).filter(t => OBRAS.some(o => o.tipo === t)).map(t =>
       `<button data-tipo="${t}" style="--c:${COLORES[t]}" aria-pressed="${f.tipo === t}">${t}</button>`).join('');
   }
+  // En mobile los filtros están plegados: el botón muestra qué hay activo.
+  const $fl = $('filtros-label');
+  if ($fl) {
+    const act = [f.pais !== 'Todos' ? f.pais : null, f.tipo, f.q].filter(Boolean);
+    $fl.textContent = act.length ? 'Filtros · ' + act.join(' · ') : 'Filtros';
+  }
 }
 function refrescar() { pintarFiltros(); mostrarLista(); dibujar(); ajustarMapa(); }
 if ($('paises')) $('paises').onclick = e => { const b = e.target.closest('[data-pais]'); if (b) { f.pais = b.dataset.pais; refrescar(); } };
 if ($('tipos')) $('tipos').onclick = e => { const b = e.target.closest('[data-tipo]'); if (b) { f.tipo = f.tipo === b.dataset.tipo ? null : b.dataset.tipo; refrescar(); } };
 if ($('buscar')) $('buscar').oninput = e => { f.q = e.target.value.trim(); mostrarLista(); dibujar(); ajustarMapa(); };
+// Mobile: despliega y pliega países, búsqueda y tipos.
+const $filtrosBtn = $('filtros-toggle'), $headerCard = document.querySelector('#ui header.card');
+if ($filtrosBtn && $headerCard) {
+  $filtrosBtn.onclick = () => {
+    const abierto = $headerCard.classList.toggle('filtros-abiertos');
+    $filtrosBtn.setAttribute('aria-expanded', String(abierto));
+  };
+}
 
 const tarjeta = o => {
   const mini = fotoMini(o);
