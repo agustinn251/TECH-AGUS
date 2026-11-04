@@ -168,20 +168,7 @@ async function dibujar() {
     L.marker(o.coordenadas, { icon, title: o.nombre }).addTo(capa).on('click', () => seleccionar(o.id))
       .bindTooltip(`<b>${o.nombre}</b><br>${o.pais} · ${usd(o.inversion_usd)}<br>${o.estado}<br><small>Tocá para ver</small>`,
         { direction: 'top', offset: [0, thumb ? -32 : -12], className: 'tip' });
-    if (o.ruta){
-
-  L.polyline.antPath(o.ruta,{
-    color: color(o),
-    pulseColor: '#ffffff',
-    weight: 5,
-    opacity: 0.9,
-    delay: 500,
-    dashArray: [5,25],
-    hardwareAcceleration: true
-  }).addTo(capa);
-
-}
-
+     if (o.ruta) L.polyline(o.ruta, { color: color(o), weight: 4, dashArray: '8 6' }).addTo(capa);
   });
   const fecha = new Date(ACTUALIZADO + 'T12:00:00').toLocaleDateString('es-AR', { day: 'numeric', month: 'short', year: 'numeric' });
   const $stats = $('stats');
