@@ -87,8 +87,9 @@
     display: none !important;
   }
 
-  /* La atribución del mapa no queda debajo de la barra nueva */
-  .leaflet-bottom.leaflet-right {
+  /* La atribución (derecha) y el selector de capas (izquierda) no quedan debajo de la barra nueva */
+  .leaflet-bottom.leaflet-right,
+  .leaflet-bottom.leaflet-left {
     margin-bottom: 66px !important;
   }
 
@@ -317,3 +318,12 @@ body.lista-abierta #detalle.detalle-obra{display:block !important;overflow-y:aut
 /* X de cierre en el detalle de obra (misma que la del listado) */
 .cerrar-panel{width:34px;min-width:34px;height:34px;padding:0;display:grid;place-items:center;border-radius:50%}
 .cerrar-panel:hover{border-color:#ef4444;color:#ff9b9b}
+
+/* Con el panel ejecutivo abierto, los controles de Leaflet (capas, zoom, atribución)
+   se corren a la izquierda del panel para no quedar tapados. */
+@media (min-width: 821px) {
+  body.exec-abierto .leaflet-bottom.leaflet-right {
+    right: calc(var(--exec-w, 340px) + 44px);
+    transition: right .2s ease;
+  }
+}

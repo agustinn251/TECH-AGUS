@@ -22,7 +22,7 @@ const oscuro = L.layerGroup([esri('Canvas/World_Dark_Gray_Base', 16), esri('Canv
 const satelite = L.layerGroup([esri('World_Imagery', 18), esri('Reference/World_Boundaries_and_Places', 18)]);
 oscuro.addTo(map);
 L.control.layers({ 'Oscuro': oscuro, 'Satélite': satelite, 'Calles': esri('World_Street_Map', 18) }, null,
-  { collapsed: movil, position: movil ? 'topright' : 'bottomright' }).addTo(map);
+  { collapsed: movil, position: movil ? 'bottomleft' : 'bottomright' }).addTo(map);
 
 [['Argentina', -36, -65, 1], ['Chile', -31, -73.2, 0], ['Uruguay', -32.8, -55.8, 0], ['Paraguay', -23.4, -58.4, 0],
  ['Bolivia', -16.5, -64.7, 0], ['Perú', -9.5, -75, 0], ['Brasil', -11, -52, 1]].forEach(([n, lat, lng, g]) =>
