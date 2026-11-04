@@ -88,10 +88,11 @@ function datosResponsable(o) {
   return null;
 }
 
+// Detalle de la obra: solo el responsable de la obra (si falta, cae al del país).
 function bloqueResponsable(o) {
   const r = datosResponsable(o);
   if (!r) return '';
-  return tarjetaResp({ ...r, stats: [[o.avance_pct == null ? 's/d' : o.avance_pct + '%', 'avance'], [usd(o.inversion_usd), 'inversión']] });
+  return tarjetaResp({ ...r, variante: 'resp--destacada' });
 }
 
 // Avatar chico para el listado de obras.
@@ -226,6 +227,7 @@ function mostrarLista() {
 
   const btnCerrar = $('btn-cerrar-listado');
   if (btnCerrar) btnCerrar.onclick = cerrarListado;
+  if (window.pintarEjecutivo) window.pintarEjecutivo(visibles());
 }
 
 function seleccionar(id) {
@@ -268,6 +270,7 @@ function seleccionar(id) {
     <ul>${o.fuentes.map(x => `<li><a href="${x.url}" target="_blank" rel="noopener">${x.texto}</a></li>`).join('')}</ul>`;
   $detalle.scrollTop = 0;
   pintarGaleria();
+  if (window.pintarEjecutivo) window.pintarEjecutivo(visibles());
 }
 
 async function pintarGaleria() {

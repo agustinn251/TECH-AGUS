@@ -205,3 +205,30 @@ body.lista-abierta #detalle.detalle-obra{display:block !important;overflow-y:aut
 #detalle::-webkit-scrollbar-thumb{background:#34A853;border-radius:999px;min-height:40px}
 .lista-contenedor::-webkit-scrollbar-thumb:hover,
 #detalle.detalle-obra::-webkit-scrollbar-thumb:hover{background:#3fc463}
+
+/* ---- Bloque "Equipo responsable" del detalle (obra + país) ---- */
+.equipo-resp{margin:0 0 18px}
+.equipo-t{margin:0 0 9px;font:700 9.5px 'JetBrains Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.equipo-filas{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:10px}
+.equipo-filas .resp--card{padding:18px 12px 17px;gap:8px;border-radius:18px;border-color:rgba(52,168,83,.28);
+  background:linear-gradient(165deg,rgba(52,168,83,.16),rgba(255,255,255,.03) 62%);box-shadow:0 10px 24px rgba(0,0,0,.28)}
+.equipo-filas .resp-ava{width:86px;height:86px;box-shadow:0 0 0 1px rgba(52,168,83,.35),0 8px 20px rgba(0,0,0,.4)}
+.equipo-filas .resp-txt{gap:3px}
+.equipo-filas .resp-rol{order:-1;font-size:8.5px;letter-spacing:.1em;color:#7fd398}
+.equipo-filas .resp-nom{font-size:16.5px;white-space:normal;line-height:1.22;overflow-wrap:anywhere}
+.equipo-filas .resp-cargo{font-size:11.5px;white-space:normal;line-height:1.35;color:var(--muted)}
+
+/* La grilla del modal un poco más generosa */
+.resp--card .resp-ava{width:92px;height:92px}
+.resp--card .resp-nom{font-size:18px;white-space:normal;line-height:1.22}
+.resp--card .resp-cargo{white-space:normal;line-height:1.35}
+
+/* ---- Tarjeta destacada del detalle de obra (una sola, más grande) ---- */
+.resp--destacada{padding:18px;border-radius:18px;gap:16px;margin:0 0 16px;
+  border-color:rgba(52,168,83,.30);
+  background:linear-gradient(150deg,rgba(52,168,83,.17),rgba(255,255,255,.03) 66%);
+  box-shadow:0 12px 28px rgba(0,0,0,.30)}
+.resp--destacada .resp-ava{width:88px;height:88px;box-shadow:0 0 0 1px rgba(52,168,83,.35),0 8px 20px rgba(0,0,0,.42)}
+.resp--destacada .resp-nom{font-size:19px;line-height:1.2;white-space:normal}
+.resp--destacada .resp-cargo{font-size:13px;color:#c7ced8;white-space:normal}
+.resp--destacada .resp-rol{font-size:9px;letter-spacing:.15em}

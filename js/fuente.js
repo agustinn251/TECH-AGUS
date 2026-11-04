@@ -11,9 +11,12 @@
     prioridad: ['prioridad'], inicio: ['inicio', 'fechainicio', 'anioinicio'], fin: ['fin', 'fechafin', 'aniofin'], avance: ['avancepct', 'avance'],
     descripcion: ['descripcion', 'resumen'], colaboradores: ['colaboradores'], hitos: ['hitos'], datos: ['datos', 'datosclave'],
     fuentes: ['fuentes', 'fuente'], fotos: ['fotos', 'imagenes'], ruta: ['ruta', 'trazado'], sin_suma: ['sinsuma'],
-    responsable: ['responsable', 'responsableobra', 'responsabledeobra', 'responsabledelproyecto', 'encargado'],
-    cargo: ['cargo', 'puesto', 'rol', 'posicion'],
-    foto_responsable: ['fotoresponsable', 'fotodelresponsable', 'fotoresponsableobra', 'fotopersona']
+    responsable_obra: ['responsableobra', 'responsabledeobra', 'responsabledelproyecto', 'responsable', 'encargado'],
+    cargo_obra: ['cargoobra', 'cargo', 'puesto', 'rol', 'posicion'],
+    foto_obra: ['fotoresponsableobra', 'fotoresponsable', 'fotodelresponsable', 'fotopersona'],
+    responsable_pais: ['responsablepais', 'responsabledelpais', 'responsableporpais'],
+    cargo_pais: ['cargopais', 'puestopais'],
+    foto_pais: ['fotoresponsablepais', 'fotopais', 'fotodelpais']
   };
   // Varios valores en una celda: uno por línea (Alt+Enter en Excel) o separados por ";" si no hay saltos de línea.
   const lista = v => Array.isArray(v) ? v : (t => (t.includes('\n') ? t.split(/\r?\n/) : t.split(';')).map(x => x.trim()).filter(Boolean))(String(v ?? ''));
@@ -32,15 +35,22 @@
     const m = {}; Object.keys(fila).forEach(k => m[K(k)] = fila[k]);
     const g = c => { for (const s of SIN[c]) if (m[s] !== undefined && m[s] !== null && m[s] !== '') return m[s]; return undefined; };
     const nombre = String(g('nombre') ?? '').trim(); if (!nombre) return { omitida: 'fila sin nombre' };
+    // Dos personas distintas por fila: la de la obra y la del país, cada una con sus columnas.
+    const persona = suf => ({
+      nombre: String(g('responsable' + suf) ?? '').trim(),
+      cargo: String(g('cargo' + suf) ?? '').trim(),
+      foto: String(g('foto' + suf) ?? '').trim()
+    });
+    const personaObra = persona('_obra'), personaPais = persona('_pais');
+    const hayPersona = p => !!(p.nombre || p.foto);
     // Fila de país: se reconoce por el ID tipo "pais-argentina" o por Tipo = "País".
     // No lleva coordenadas: sirve solo para la tarjeta del responsable del país, nunca va al mapa.
     const idCrudo = String(g('id') ?? '').trim();
     if (/^pais[\s_-]/i.test(idCrudo) || K(String(g('mercado') ?? '')) === 'pais') {
+      const p = hayPersona(personaPais) ? personaPais : personaObra;
       return { pais: {
         nombre: String(g('pais') ?? nombre).trim() || nombre,
-        responsable: String(g('responsable') ?? '').trim(),
-        cargo: String(g('cargo') ?? '').trim(),
-        foto: String(g('foto_responsable') ?? '').trim()
+        responsable: p.nombre, cargo: p.cargo, foto: p.foto
       } };
     }
     let lat = num(g('lat')), lng = num(g('lng')); const co = g('coordenadas');
@@ -61,7 +71,9 @@
     const datos = lista(g('datos')).map(d => typeof d === 'object' ? d : (([v, e]) => ({ valor: v, etiqueta: e }))(partir(d)));
     const fuentes = lista(g('fuentes')).map(x => { if (typeof x === 'object') return x; const [a, b] = partir(x); return b ? { texto: a, url: b } : { texto: a.replace(/^https?:\/\/(www\.)?/, '').split('/')[0], url: a }; });
     // Persona a cargo de esta obra (independiente de "Fotos", que son las imágenes de la obra).
-    const resp = { nombre: String(g('responsable') ?? '').trim(), cargo: String(g('cargo') ?? '').trim(), foto: String(g('foto_responsable') ?? '').trim() };
+    const resp = personaObra;
+    // Persona del país, si la cargaron en esta misma fila (columnas ..._pais).
+    const respPais = hayPersona(personaPais) ? personaPais : null;
     return { obra: {
       id: String(g('id') ?? (sigla !== '—' ? slug(sigla) : slug(nombre))), sigla, nombre, pais: String(g('pais') ?? '—').trim(), cliente: String(g('cliente') ?? '—').trim(),
       mercado, tipo: mercado, inicio: String(g('inicio') ?? '—'), fin: String(g('fin') ?? '—'), estado_csv: ec, prioridad: cap(String(g('prioridad') ?? 'Sin definir').trim()) || 'Sin definir',
@@ -69,15 +81,25 @@
       inversion_usd: inv, inversion_nota: String(g('inversion_nota') ?? (inv ? 'Monto informado en la planilla.' : 'Sin dato de inversión verificado.')),
       avance_pct: av, estado: est, descripcion: desc, datos, colaboradores: lista(g('colaboradores')), hitos, fotos: lista(g('fotos')), fuentes,
       responsable: resp,
+      ...(respPais ? { responsable_pais: respPais } : {}),
       ...(desc ? {} : { basica: true }), ...(/^(si|sí|1|true|x|yes)$/i.test(String(g('sin_suma') ?? '').trim()) ? { sin_suma: true } : {})
     } };
   }
   function normalizarTodo(filas) {
     const obras = [], omitidas = [], ids = new Set(), paises = {};
+    // Una fila "pais-..." define al responsable del país. Si no hay fila propia,
+    // sirve el primer dato que aparezca en las columnas ..._pais de cualquier obra de ese país.
+    const cargarPais = (nombre, p, forzar = false) => {
+      if (!nombre || !p || !(p.responsable || p.foto)) return;
+      const k = K(nombre);
+      if (forzar || !paises[k]) paises[k] = { nombre, responsable: p.responsable, cargo: p.cargo, foto: p.foto };
+    };
     filas.forEach(f => {
       const r = normalizar(f);
-      if (r.pais) { if (r.pais.nombre) paises[K(r.pais.nombre)] = r.pais; return; }
-      if (r.obra) { let id = r.obra.id, n = 2; while (ids.has(id)) id = r.obra.id + '-' + n++; ids.add(id); obras.push({ ...r.obra, id }); } else omitidas.push(r.omitida);
+      if (r.pais) { cargarPais(r.pais.nombre, r.pais, true); return; }
+      if (r.obra) { let id = r.obra.id, n = 2; while (ids.has(id)) id = r.obra.id + '-' + n++; ids.add(id); obras.push({ ...r.obra, id });
+        if (r.obra.responsable_pais) cargarPais(r.obra.pais, { responsable: r.obra.responsable_pais.nombre, cargo: r.obra.responsable_pais.cargo, foto: r.obra.responsable_pais.foto });
+      } else omitidas.push(r.omitida);
     });
     return { obras, omitidas, paises };
   }

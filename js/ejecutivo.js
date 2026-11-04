@@ -134,15 +134,24 @@
     if (m.pond != null) ins.push(['dato', `Avance ponderado por inversión: ${fmt(m.pond)} %.`]);
     const G = seccion('resumen', 'Resumen ejecutivo', `<p class="ex-resumen" id="ex-texto">${esc(resumen(m))}</p>
       <ul class="ex-ins">${ins.map(([i, t]) => `<li class="${i}">${svg(i)}<span>${t}</span></li>`).join('')}</ul><button class="ex-btn" id="ex-copiar">Copiar resumen</button>`);
-    // H. Responsables por país
+    // H. Responsable del país activo (el filtro, o el país de la obra abierta)
     const listaResp = paisesConResponsable();
-    const R = listaResp.length ? seccion('persona', 'Responsables', listaResp.map(p => {
+    const cl = q => (typeof clavePais === 'function' ? clavePais(q) : String(q || '').toLowerCase());
+    const paisActivo = f.pais !== 'Todos' ? f.pais
+      : (typeof actual !== 'undefined' && actual ? ((OBRAS.find(o => o.id === actual) || {}).pais || null) : null);
+    const activo = paisActivo ? listaResp.find(p => cl(p.pais) === cl(paisActivo)) : null;
+    const filasResp = listaResp.map(p => {
       const foto = (typeof fotoPerfil === 'function' ? fotoPerfil(p.foto) : p.foto);
       const ini = String(p.responsable || '?').trim().split(/\s+/).slice(0, 2).map(x => x[0]).join('').toUpperCase();
       const ava = foto ? `<img src="${esc(foto)}" alt="${esc(p.responsable)}" loading="lazy">` : `<span class="ini">${esc(ini)}</span>`;
       return `<button class="ex-resp" data-pais="${esc(p.pais)}" aria-pressed="${f.pais === p.pais}">${ava}`
         + `<span><b>${esc(p.responsable || 'Sin asignar')}</b><small>${esc([p.cargo, p.pais].filter(Boolean).join(' · '))}</small></span></button>`;
-    }).join('') + `<button class="ex-btn" id="ex-equipo">Ver equipo completo</button>`) : '';
+    }).join('');
+    const tarjetaPais = activo && typeof tarjetaResp === 'function'
+      ? tarjetaResp({ rol: 'Responsable del país', nombre: activo.responsable || 'Sin asignar', cargo: activo.cargo, foto: activo.foto })
+      : '';
+    const R = listaResp.length ? seccion('persona', 'Responsables',
+      (tarjetaPais || filasResp) + `<button class="ex-btn" id="ex-equipo">Ver equipo completo</button>`) : '';
 
     const cuerpo = $('exec').querySelector('.ex-cuerpo'), y = cuerpo ? cuerpo.scrollTop : 0;
     $('exec').innerHTML = cab + `<div class="ex-cuerpo">${R}${G}${A}${E}${F}${B}${C}${D}</div><footer class="ex-pie">Cálculos sobre los proyectos visibles. Los montos provienen de fuentes públicas; los proyectos sin avance verificado se excluyen del promedio.</footer>`;
