@@ -5,8 +5,8 @@
 const FUENTE = {
   modo: 'url',
 
-  //url: 'https://docs.google.com/spreadsheets/d/1jyRwIQb-Rcpp0ERvFJtfp_Pu60u4KupCdEAzlrYKZXA/export?format=csv',
-    url: 'https://techintingenieria-my.sharepoint.com/:x:/g/personal/gvallejos_proveedores_techint_com/IQCGE3m4me_fQ444jAzP1r3MAV7rtCzO-Jso3NM0euKk5_w?download=1'
+  url: 'https://docs.google.com/spreadsheets/d/1jyRwIQb-Rcpp0ERvFJtfp_Pu60u4KupCdEAzlrYKZXA/export?format=csv',
+    //url: 'https://techintingenieria-my.sharepoint.com/:x:/g/personal/gvallejos_proveedores_techint_com/IQCGE3m4me_fQ444jAzP1r3MAV7rtCzO-Jso3NM0euKk5_w?download=1'
   sharepoint: {
     tenantId: '',
     clientId: '',
