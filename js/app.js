@@ -162,7 +162,7 @@ async function dibujar() {
     const n = o.fotos.length + mias.length; fotosTotal += n;
     let thumb = o.fotos[0] || null;
     if (!thumb && mias[0]) { thumb = URL.createObjectURL(mias[0].blob); urlsMapa.push(thumb); }
-    const cuerpo = thumb ? `<em class="foto"><img src="${thumb}" alt="">${n > 1 ? `<b>${n}</b>` : ''}</em>` : '<i></i>';
+    const cuerpo = thumb ? `<em class="foto"><img src="${thumb}" alt=""></em>` : '<i></i>';
     const icon = L.divIcon({ className: '', iconSize: [0, 0],
       html: `<div class="pin${thumb ? ' con-foto' : ''}${o.id === actual ? ' sel' : ''}" data-id="${o.id}" style="--c:${color(o)}">${cuerpo}<span>${o.nombre.split(' · ')[0]}</span></div>` });
     L.marker(o.coordenadas, { icon, title: o.nombre }).addTo(capa).on('click', () => seleccionar(o.id))
