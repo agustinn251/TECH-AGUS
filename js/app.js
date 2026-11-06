@@ -168,7 +168,7 @@ async function dibujar() {
     L.marker(o.coordenadas, { icon, title: o.nombre }).addTo(capa).on('click', () => seleccionar(o.id))
       .bindTooltip(`<b>${o.nombre}</b><br>${o.pais} · ${usd(o.inversion_usd)}<br>${o.estado}<br><small>Tocá para ver</small>`,
         { direction: 'top', offset: [0, thumb ? -32 : -12], className: 'tip' });
-     if (o.ruta) L.polyline(o.ruta, { color: color(o), weight: 4, dashArray: '8 6' }).addTo(capa);
+    if (o.ruta) L.polyline(o.ruta, { color: color(o), weight: 4, dashArray: '8 6' }).addTo(capa);
   });
   const fecha = new Date(ACTUALIZADO + 'T12:00:00').toLocaleDateString('es-AR', { day: 'numeric', month: 'short', year: 'numeric' });
   const $stats = $('stats');
@@ -291,6 +291,7 @@ function mostrarLista() {
 function seleccionar(id) {
   const o = OBRAS.find(x => x.id === id);
   actual = id;
+  galIdx = 0;
   if (!listadoAbierto) abrirListado();
   try { history.replaceState(null, '', '#' + id); } catch {}
   document.querySelectorAll('.pin').forEach(p => p.classList.toggle('sel', p.dataset.id === id));
@@ -303,11 +304,12 @@ function seleccionar(id) {
   $detalle.classList.add('detalle-obra');
   $detalle.innerHTML = `
     <div class="fila"><button class="cerrar" id="volver">← Todas las obras</button>
-      <span class="nav"><button class="cerrar" id="prev" aria-label="Obra anterior">‹</button><button class="cerrar" id="next" aria-label="Obra siguiente">›</button><button class="cerrar cerrar-panel" id="cerrar-detalle" aria-label="Cerrar">✕</button></span></div>
+      <span class="nav"><button class="cerrar cerrar-panel" id="cerrar-detalle" aria-label="Cerrar">✕</button></span></div>
     <p class="etiquetas"><span class="tipo">${o.tipo}</span> <span class="pais-tag">${o.pais}</span></p>
     <h2>${o.nombre}</h2>
     <p class="ubic">${o.ubicacion}</p>
     ${bloqueResponsable(o)}
+    <div class="galeria galeria-obra" id="galeria"></div>
     <div class="kpis">
       <div class="kpi"><b>${usd(o.inversion_usd)}</b><span>Inversión</span></div>
       <div class="kpi"><b>${o.estado}</b><span>Estado</span></div>
@@ -321,9 +323,6 @@ function seleccionar(id) {
     <ul>${o.colaboradores.map(c => `<li>${c}</li>`).join('')}</ul>
     <h3>Avances e hitos</h3>
     <ul class="hitos">${o.hitos.map(h => `<li><small>${h.fecha}</small>${h.texto}</li>`).join('')}</ul>
-    <h3>Imágenes</h3>
-    <button class="btn" data-abrir>Subir fotos a esta obra</button>
-    <div class="galeria" id="galeria"></div>
     <h3>Fuentes</h3>
     <ul>${o.fuentes.map(x => `<li><a href="${x.url}" target="_blank" rel="noopener">${x.texto}</a></li>`).join('')}</ul>`;
   $detalle.scrollTop = 0;
@@ -331,15 +330,45 @@ function seleccionar(id) {
   if (window.pintarEjecutivo) window.pintarEjecutivo(visibles());
 }
 
+let galFotos = [], galIdx = 0;
+
 async function pintarGaleria() {
   const o = OBRAS.find(x => x.id === actual), $g = $('galeria');
   if (!o || !$g) return;
   urlsGal.forEach(u => URL.revokeObjectURL(u)); urlsGal = [];
   let subidas = []; try { subidas = await fotosDe(o.id); } catch {}
-  const todas = [...o.fotos.map(src => ({ src })), ...subidas.map(x => { const src = URL.createObjectURL(x.blob); urlsGal.push(src); return { src, id: x.id }; })];
-  $g.innerHTML = todas.length
-    ? todas.map(x => `<figure><img src="${x.src}" alt="Foto de ${o.nombre}">${x.id ? `<button class="borrar" data-id="${x.id}" aria-label="Borrar imagen">×</button>` : ''}</figure>`).join('')
-    : '<div class="vacio">Todavía no hay imágenes de esta obra.</div>';
+  galFotos = [...o.fotos.map(src => ({ src })), ...subidas.map(x => { const src = URL.createObjectURL(x.blob); urlsGal.push(src); return { src, id: x.id }; })];
+  if (galIdx >= galFotos.length) galIdx = 0;
+  renderGaleria();
+}
+
+// Una imagen a la vez; con flechas y contador si hay más de una.
+function renderGaleria() {
+  const $g = $('galeria'), o = OBRAS.find(x => x.id === actual);
+  if (!$g) return;
+  if (!galFotos.length) { $g.innerHTML = ''; $g.hidden = true; return; }
+  $g.hidden = false;
+  const f = galFotos[galIdx], varias = galFotos.length > 1;
+  $g.innerHTML = '<figure class="gal-fig">'
+    + `<img src="${f.src}" alt="Foto de ${o ? o.nombre : 'la obra'}">`
+    + (f.id ? `<button class="borrar" data-id="${f.id}" aria-label="Borrar imagen">×</button>` : '')
+    + (varias ? '<button class="gal-nav gal-prev" aria-label="Imagen anterior">‹</button>'
+        + '<button class="gal-nav gal-next" aria-label="Imagen siguiente">›</button>'
+        + `<span class="gal-cont">${galIdx + 1} / ${galFotos.length}</span>` : '')
+    + '</figure>';
+}
+
+// Visor a pantalla completa, con las flechas para pasar de imagen.
+function pintarVisor() {
+  if (!visor || !galFotos.length) return;
+  visor.querySelector('img').src = galFotos[galIdx].src;
+  visor.classList.toggle('con-nav', galFotos.length > 1);
+}
+function moverGaleria(d) {
+  if (!galFotos.length) return;
+  galIdx = (galIdx + d + galFotos.length) % galFotos.length;
+  renderGaleria();
+  if (visor && visor.open) pintarVisor();
 }
 
 $detalle.addEventListener('click', async e => {
@@ -347,18 +376,27 @@ $detalle.addEventListener('click', async e => {
   if (card) return seleccionar(card.dataset.id);
   if (t.closest('#volver')) { mostrarLista(); return ajustarMapa(); }
   if (t.closest('#cerrar-detalle')) { cerrarListado(); return; }
-  if (t.closest('#prev') || t.closest('#next')) {
-    const v = visibles(), i = v.findIndex(o => o.id === actual), d = t.closest('#next') ? 1 : -1;
-    return seleccionar(v[(i + d + v.length) % v.length].id);
-  }
+  if (t.closest('.gal-next')) return moverGaleria(1);
+  if (t.closest('.gal-prev')) return moverGaleria(-1);
   if (t.closest('#limpiar')) { Object.assign(f, { pais: 'Todos', tipo: null, q: '' }); if ($('buscar')) $('buscar').value = ''; return refrescar(); }
   if (t.closest('[data-abrir]')) return abrirSubida();
   const b = t.closest('.borrar');
   if (b) { await borrarFoto(Number(b.dataset.id)); dibujar(); return pintarGaleria(); }
   const img = t.closest('.galeria img');
-  if (img) { visor.querySelector('img').src = img.src; visor.showModal(); }
+  if (img) { pintarVisor(); visor.showModal(); }
 });
-if (visor) visor.onclick = () => visor.close();
+if (visor) {
+  visor.onclick = e => {
+    if (e.target.closest('.visor-prev')) return moverGaleria(-1);
+    if (e.target.closest('.visor-next')) return moverGaleria(1);
+    visor.close();
+  };
+  document.addEventListener('keydown', e => {
+    if (!visor.open) return;
+    if (e.key === 'ArrowRight') { e.preventDefault(); moverGaleria(1); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); moverGaleria(-1); }
+  });
+}
 
 const $modal = $('subida'), $sel = $('obra-sel'), $msg = $('msg'), zona = $('zona');
 if ($sel) $sel.innerHTML = OBRAS.map(o => `<option value="${o.id}">${o.nombre}</option>`).join('');
@@ -396,8 +434,9 @@ function mostrarAvisoDatos() {
   const info = window.ORIGEN_DATOS || { n: OBRAS.length, origen: '', omitidas: [] };
   if (!err && info.n > 0) { el.hidden = true; return; }
   const detalle = err || 'La fuente no devolvió obras válidas.';
-  el.innerHTML = '<b>⚠ No se pudieron cargar los datos</b>'
-    + `<span>${escH(detalle)}${info.origen ? ' · ' + escH(info.origen) : ''}</span>`
+  const texto = info.n > 0 ? 'Datos sin actualizar' : 'Sin obras para mostrar';
+  el.innerHTML = '<span class="aviso-ic" aria-hidden="true">⚠</span>'
+    + `<span class="aviso-txt" title="${escH(detalle + (info.origen ? ' · ' + info.origen : ''))}">${texto}</span>`
     + '<button class="btn" id="aviso-reintentar">Reintentar</button>';
   el.hidden = false;
   const b = $('aviso-reintentar');

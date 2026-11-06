@@ -1,10 +1,10 @@
 // Editá o agregá obras acá. Los datos con "aprox." deben verificarse antes de publicar.
 const ACTUALIZADO = "2026-10-30";
 const COLORES = {
-  "Petróleo y gas": "#FF6B00",      // Naranja
-  "Agua": "#00BFFF",               // Turquesa
+  "Petróleo y gas": "#ff6a2b",      // Naranja
+  "Agua": "#22d3c5",               // Turquesa
   "Minería": "#b794f6",            // Violeta claro
-  "Acero e industria": "#FF3D71",  // Rojo Industrial
+  "Acero e industria": "#ef4444",  // Rojo Industrial
 };
 
 function obtenerEstadoPorAvance(avance) {
